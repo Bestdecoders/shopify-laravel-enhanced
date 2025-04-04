@@ -6,5 +6,6 @@ use Bestdecoders\ShopifyLaravelEnhanced\Jobs\BaseUninstallJob;
 
 class AppUninstalledJob extends BaseUninstallJob
 {
+
  
 }

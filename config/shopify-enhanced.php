@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
+    'admin_email' => env('ADMIN_EMAIL', 'admin1@example.com'),
     'thanks_email_template' => 'emails.thanks',
     'user_model' => \App\Models\User::class, // Default User model
+
     'queries' => [
         'shop' => <<<GRAPHQL
             query {
@@ -55,20 +56,8 @@ return [
                     }
                 }
             GRAPHQL,
+
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | After Authenticate Job
-    |--------------------------------------------------------------------------
-    |
-    | The job that runs after a shop has been authenticated. This will fire
-    | after every authentication attempt.
-    |
-    */
-    'after_authenticate_job' => [
-        'job' => Bestdecoders\ShopifyLaravelEnhanced\Jobs\AfterInstallJob::class,
-        'inline' => true,
-    ],
 ];

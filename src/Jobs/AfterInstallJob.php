@@ -36,7 +36,7 @@ class AfterInstallJob implements ShouldQueue
     public function handle()
     {
         try {
-            Log::info("Processing app installation for shop: " . json_encode($this->shop));
+            \debug_log("Processing app installation for shop: " . json_encode($this->shop));
 
             // Fetch shop info via GraphQL
             $shopInfo = $this->fetchShopInfo($this->shop->name);
@@ -62,14 +62,14 @@ class AfterInstallJob implements ShouldQueue
      * @return array
      */
     private function fetchShopInfo(string $shopDomain): array
-{
-    $service = app(ShopifyGraphqlService::class);
-    $query = config('shopify-enhanced.queries.shop');
-    $response = $service->execute($shopDomain, $query);
-    // Convert ResponseAccess to an array
-    return $response->toArray();
-}
-    
+    {
+        $service = app(ShopifyGraphqlService::class);
+        $query = config('shopify-enhanced.queries.shop');
+        $response = $service->execute($shopDomain, $query);
+        // Convert ResponseAccess to an array
+        return $response->toArray();
+    }
+
 
     /**
      * Update the shop email in the database.
@@ -82,7 +82,7 @@ class AfterInstallJob implements ShouldQueue
         if ($shopEmail) {
             $this->shop->email = $shopEmail;
             $this->shop->save();
-            Log::info("Shop email updated to {$shopEmail} for {$this->shop->name}");
+            \debug_log("Shop email updated to {$shopEmail} for {$this->shop->name}");
         } else {
             Log::warning("Shop email not available for {$this->shop->name}");
         }
@@ -99,7 +99,7 @@ class AfterInstallJob implements ShouldQueue
     {
         if ($shopEmail && filter_var($shopEmail, FILTER_VALIDATE_EMAIL)) {
             Mail::to($shopEmail)->send(new ThanksMail($shopInfo));
-            Log::info("Thanks mail sent to {$shopEmail}");
+            \debug_log("Thanks mail sent to {$shopEmail}");
         } else {
             Log::warning("Invalid or missing shop email for {$this->shop->name}");
         }
@@ -116,7 +116,7 @@ class AfterInstallJob implements ShouldQueue
         $adminEmail = config('shopify-enhanced.admin_email');
         if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
             Mail::to($adminEmail)->send(new ThanksMail($shopInfo));
-            Log::info("Admin notified about installation for shop: {$this->shop->name}");
+            \debug_log("Admin notified about installation for shop: {$this->shop->name}");
         } else {
             Log::warning("Invalid or missing admin email. Notification not sent.");
         }

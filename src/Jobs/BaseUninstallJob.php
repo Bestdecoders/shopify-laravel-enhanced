@@ -17,7 +17,7 @@ class BaseUninstallJob extends BaseAppUninstalledJob
     public function __construct(string $domain, \stdClass $data)
     {
         parent::__construct($domain, $data);
-        Log::info("BaseUninstallJob initialized for shop: {$domain}");
+        \debug_log("BaseUninstallJob initialized for shop: {$domain}");
     }
 
     public function handle(
@@ -29,7 +29,7 @@ class BaseUninstallJob extends BaseAppUninstalledJob
 
             // Convert the string domain to a ShopDomain object
             $shopDomain = ShopDomain::fromNative($this->domain);
-            Log::info("BaseUninstallJob triggered for shop: {$shopDomain->toNative()}");
+            \debug_log("BaseUninstallJob triggered for shop: {$shopDomain->toNative()}");
 
             // Fetch the shop using ShopQuery
             $shop = $shopQuery->getByDomain($shopDomain);
@@ -54,7 +54,7 @@ class BaseUninstallJob extends BaseAppUninstalledJob
         $adminEmail = config('shopify-enhanced.admin_email');
         if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
             Mail::to($adminEmail)->send(new AdminUninstallNotification($shopDomain));
-            Log::info("Admin notified about uninstall for shop: {$shopDomain}");
+            \debug_log("Admin notified about uninstall for shop: {$shopDomain}");
         } else {
             Log::warning("Invalid or missing admin email. Notification not sent.");
         }
@@ -65,9 +65,10 @@ class BaseUninstallJob extends BaseAppUninstalledJob
         $shopEmail = $shop->email ?? null;
         if ($shopEmail && filter_var($shopEmail, FILTER_VALIDATE_EMAIL)) {
             Mail::to($shopEmail)->send(new UserUninstallNotification($this->domain));
-            Log::info("Shop owner notified about uninstall for shop: {$this->domain}");
+            \debug_log("Shop owner notified about uninstall for shop: {$this->domain}");
         } else {
             Log::warning("Invalid or missing shop email for {$this->domain}. Notification not sent.");
         }
     }
 }
+

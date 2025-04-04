@@ -4,13 +4,14 @@ namespace Bestdecoders\ShopifyLaravelEnhanced\Services;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
 
 class ShopifyGraphqlService
 {
     public function execute($shop, $query, $payload = [])
     {
         try {
+
             $shopModel = $this->getShop($shop);
 
             if (!$shopModel) {
@@ -30,13 +31,17 @@ class ShopifyGraphqlService
 
     protected function getShop($shop)
     {
-        $userModel = config('shopify-enhanced.user_model');
 
-        if (!class_exists($userModel)) {
-            throw new \Exception("The user model class '{$userModel}' does not exist.");
+
+        if (Auth::check()) {
+            return Auth::user();
+        } elseif ($shop) {
+            $userModel = config('shopify-enhanced.user_model');
+            if (!class_exists($userModel)) {
+                throw new \Exception("The user model class '{$userModel}' does not exist.");
+            }
+            return $userModel::where('name', $shop)->first();
         }
-
-        return $userModel::where('name', $shop)->first();
     }
 
 
