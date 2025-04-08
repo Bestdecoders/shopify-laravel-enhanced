@@ -80,7 +80,7 @@ class AfterInstallJob implements ShouldQueue
     private function updateShopEmail(?string $shopEmail): void
     {
         if ($shopEmail) {
-            $this->shop->email = $shopEmail;
+            $this->shop->owner_email = $shopEmail;
             $this->shop->save();
             \debug_log("Shop email updated to {$shopEmail} for {$this->shop->name}");
         } else {
