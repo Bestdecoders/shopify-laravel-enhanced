@@ -20,6 +20,8 @@ class Billable
             return $next($request);
         }
 
+   
+
         if (Util::getShopifyConfig('billing_enabled') === true) {
             $shop = auth()->user();
             if (!$shop->plan && !$shop->isFreemium() && !$shop->isGrandfathered() && $request->ajax()) {

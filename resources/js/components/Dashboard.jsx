@@ -1,25 +1,11 @@
 import {
-    CalloutCard,
-    Grid,
-    Icon,
-    Page,
-    Text,
     Card,
     Box,
+    Button,
 } from "@shopify/polaris";
-import { SmileyHappyIcon } from "@shopify/polaris-icons";
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-} from "recharts";
 import Editor from "./SCEditor";
 import TableEditor from "./TableEditor";
-
+import { useAxios } from "../hooks/useAxios";
 const Dashboard = () => {
     const data = [
         { name: "Jan", salesA: 1000, salesB: 800, salesC: 1200 },
@@ -27,9 +13,21 @@ const Dashboard = () => {
         { name: "Mar", salesA: 1500, salesB: 1200, salesC: 1600 },
         // Add more data points as needed
     ];
+    const axios = useAxios();
+
+    const checkBilling =  async () => {
+       await axios.post("/check-billing").then((response) => {
+            console.log(response);
+        });
+    }
 
     return (
         <>
+            <Card sectioned>
+                <Box background="bg-primary" padding="5">
+                    <Button primary onClick={checkBilling} >Button</Button>
+                </Box>
+            </Card>
             <Card sectioned>
                 <Box background="bg-primary" padding="5">
                     <Editor />
@@ -38,11 +36,6 @@ const Dashboard = () => {
             <Card sectioned>
                 <Box padding="0" fullWidth>
                     <TableEditor />
-                </Box>
-            </Card>
-            <Card sectioned>
-                <Box background="bg-primary" padding="5">
-                    <Editor />
                 </Box>
             </Card>
         </>

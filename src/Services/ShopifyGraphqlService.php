@@ -24,7 +24,7 @@ class ShopifyGraphqlService
 
             return $response['body']['data'];
         } catch (Exception $e) {
-            Log::channel('graphql')->error("GraphQL execution error: " . $e->getMessage());
+            Log::error("GraphQL execution error: " . $e->getMessage());
             throw $e;
         }
     }
@@ -48,7 +48,7 @@ class ShopifyGraphqlService
     protected function validateResponse($response, $query)
     {
         if (!isset($response['body']['data'])) {
-            throw new Exception("Invalid response structure.");
+            $this->logErrors($response, 'Response Error: ', $query);
         }
 
         $data = $response['body']['data'];
@@ -65,8 +65,8 @@ class ShopifyGraphqlService
 
     protected function logErrors($errors, $prefix, $query)
     {
-        Log::channel('graphql')->error($prefix . json_encode($errors));
-        Log::channel('graphql')->info('Error Source: ' . $query);
+        Log::error($prefix . json_encode($errors));
+        Log::info('Error Source: ' . $query);
 
         throw new Exception(json_encode($errors));
     }

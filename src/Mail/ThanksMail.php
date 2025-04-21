@@ -14,7 +14,7 @@ class ThanksMail extends Mailable
 
     public function build()
     {
-        return $this->view('shopify-enhanced::emails.thanks')
+        return $this->markdown('emails.thanks')
             ->subject('Thank You for Installing Our App')
             ->with('shop', $this->shopInfo);
     }

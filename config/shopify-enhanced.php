@@ -4,7 +4,7 @@ return [
     'admin_email' => env('ADMIN_EMAIL', 'admin1@example.com'),
     'thanks_email_template' => 'emails.thanks',
     'user_model' => \App\Models\User::class, // Default User model
-
+    'auto_register_install_job' => true,
     'queries' => [
         'shop' => <<<GRAPHQL
             query {

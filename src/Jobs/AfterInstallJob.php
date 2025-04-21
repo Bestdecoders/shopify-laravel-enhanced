@@ -61,7 +61,7 @@ class AfterInstallJob implements ShouldQueue
      * @param string $shopDomain
      * @return array
      */
-    private function fetchShopInfo(string $shopDomain): array
+    protected function fetchShopInfo(string $shopDomain): array
     {
         $service = app(ShopifyGraphqlService::class);
         $query = config('shopify-enhanced.queries.shop');
@@ -77,10 +77,10 @@ class AfterInstallJob implements ShouldQueue
      * @param string|null $shopEmail
      * @return void
      */
-    private function updateShopEmail(?string $shopEmail): void
+    protected function updateShopEmail(?string $shopEmail): void
     {
         if ($shopEmail) {
-            $this->shop->email = $shopEmail;
+            $this->shop->owner_email = $shopEmail;
             $this->shop->save();
             \debug_log("Shop email updated to {$shopEmail} for {$this->shop->name}");
         } else {
@@ -95,7 +95,7 @@ class AfterInstallJob implements ShouldQueue
      * @param array $shopInfo
      * @return void
      */
-    private function sendThanksMail(?string $shopEmail, array $shopInfo): void
+    protected function sendThanksMail(?string $shopEmail, array $shopInfo): void
     {
         if ($shopEmail && filter_var($shopEmail, FILTER_VALIDATE_EMAIL)) {
             Mail::to($shopEmail)->send(new ThanksMail($shopInfo));
@@ -111,7 +111,7 @@ class AfterInstallJob implements ShouldQueue
      * @param array $shopInfo
      * @return void
      */
-    private function notifyAdmin(array $shopInfo): void
+    protected function notifyAdmin(array $shopInfo): void
     {
         $adminEmail = config('shopify-enhanced.admin_email');
         if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
