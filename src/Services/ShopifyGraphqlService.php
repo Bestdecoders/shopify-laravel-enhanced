@@ -5,9 +5,11 @@ namespace Bestdecoders\ShopifyLaravelEnhanced\Services;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use Bestdecoders\ShopifyLaravelEnhanced\Traits\ResolvesShop;
 class ShopifyGraphqlService
 {
+    use ResolvesShop;
+
     public function execute($shop, $query, $payload = [])
     {
         try {
@@ -26,21 +28,6 @@ class ShopifyGraphqlService
         } catch (Exception $e) {
             Log::error("GraphQL execution error: " . $e->getMessage());
             throw $e;
-        }
-    }
-
-    protected function getShop($shop)
-    {
-
-
-        if (Auth::check()) {
-            return Auth::user();
-        } elseif ($shop) {
-            $userModel = config('shopify-enhanced.user_model');
-            if (!class_exists($userModel)) {
-                throw new \Exception("The user model class '{$userModel}' does not exist.");
-            }
-            return $userModel::where('name', $shop)->first();
         }
     }
 

@@ -50,7 +50,10 @@ class BaseUninstallJob extends BaseAppUninstalledJob
             $adminEmail = config('shopify-enhanced.admin_email');
 
             if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-                Mail::to($adminEmail)->send(new AdminUninstallNotification($shopDomain));
+                // Mail::to($adminEmail)->send(new AdminUninstallNotification($shopDomain));
+                Mail::to($adminEmail)->send(app(AdminUninstallNotification::class, [
+                    'shopDomain' => $shopDomain,
+                ]));
                 \debug_log("Admin notified about uninstall for shop: {$shopDomain}");
             } else {
                 Log::warning("Invalid or missing admin email. Notification not sent.");
@@ -67,7 +70,10 @@ class BaseUninstallJob extends BaseAppUninstalledJob
             $shopEmail = $shop->owner_email ?? null;
 
             if ($shopEmail && filter_var($shopEmail, FILTER_VALIDATE_EMAIL)) {
-                Mail::to($shopEmail)->send(new UserUninstallNotification($this->domain));
+                // Mail::to($shopEmail)->send(new UserUninstallNotification($this->domain));
+                Mail::to($shopEmail)->send(app(UserUninstallNotification::class, [
+                    'shopDomain' => $this->domain,
+                ]));
                 \debug_log("Shop owner notified about uninstall for shop: {$this->domain}");
             } else {
                 Log::warning("Invalid or missing shop email for {$this->domain}. Notification not sent.");

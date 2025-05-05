@@ -68,6 +68,17 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/Middleware' => app_path('Http/Middleware'),
         ], 'shopify-enhanced-middleware');
+
+        $this->publishes([
+            // Grant command
+            __DIR__ . '/Console/Commands/GrantGrandfatherAccessCommand.php' =>
+                app_path('Console/Commands/GrantGrandfatherAccessCommand.php'),
+        
+            // Revoke command
+            __DIR__ . '/Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php' =>
+                app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
+        ], 'shopify-enhanced-commands');
+        
     }
 
 
@@ -82,6 +93,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../config/shopify-enhanced.php',
             'shopify-enhanced'
         );
+        
  
     }
 }
