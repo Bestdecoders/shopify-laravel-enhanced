@@ -9,9 +9,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Mail;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\ClientGrandfatheredMail;
-use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminGrandfatheredAccessMail;
+use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminAllNotification;
 use Bestdecoders\ShopifyLaravelEnhanced\Traits\ResolvesShop;
 use Illuminate\Support\Facades\Log;
+
 class GrantGrandfatheredAccess implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResolvesShop;
@@ -27,12 +28,13 @@ class GrantGrandfatheredAccess implements ShouldQueue
             'grandfather_access_valid_until' => $this->validUntil,
         ])->save();
 
-        Mail::to(config('shopify-enhanced.admin_email'))
-            ->send(app(AdminGrandfatheredAccessMail::class, [
-                'shop' => $user->name,
-                'email' => $user->owner_email,
-                'message' => 'Grandfathered access granted until ' . $this->validUntil->format('F j, Y H:i'),
-            ]));
+        $adminEmail = config('shopify-enhanced.admin_email');
+
+        Mail::to($adminEmail)->send(app(AdminAllNotification::class, [
+            'shopDomain' => $user->name,
+            'data' => [],
+            'subject' => 'Free Access Granted - ' . $user->name.'until '. $this->validUntil->format('F j, Y H:i') ,
+        ]));
 
         Mail::to($user->owner_email)
             ->send(app(ClientGrandfatheredMail::class, [
@@ -41,4 +43,3 @@ class GrantGrandfatheredAccess implements ShouldQueue
             ]));
     }
 }
-

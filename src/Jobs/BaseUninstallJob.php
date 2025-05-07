@@ -10,7 +10,7 @@ use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Messaging\Jobs\AppUninstalledJob as BaseAppUninstalledJob;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\UserUninstallNotification;
-use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminUninstallNotification;
+use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminAllNotification;
 
 class BaseUninstallJob extends BaseAppUninstalledJob
 {
@@ -37,7 +37,6 @@ class BaseUninstallJob extends BaseAppUninstalledJob
             parent::handle($shopCommand, $shopQuery, $cancelCurrentPlanAction);
 
             return true;
-
         } catch (\Exception $e) {
             Log::error("Error in BaseUninstallJob for shop {$this->domain->toNative()}: {$e->getMessage()}");
             return false;
@@ -50,9 +49,10 @@ class BaseUninstallJob extends BaseAppUninstalledJob
             $adminEmail = config('shopify-enhanced.admin_email');
 
             if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-                // Mail::to($adminEmail)->send(new AdminUninstallNotification($shopDomain));
-                Mail::to($adminEmail)->send(app(AdminUninstallNotification::class, [
+                Mail::to($adminEmail)->send(app(AdminAllNotification::class, [
                     'shopDomain' => $shopDomain,
+                    'data' => [],
+                    'subject' => 'Shopify App Uninstalled - ' . $shopDomain,
                 ]));
                 \debug_log("Admin notified about uninstall for shop: {$shopDomain}");
             } else {
@@ -64,7 +64,7 @@ class BaseUninstallJob extends BaseAppUninstalledJob
     }
 
     protected function safelyNotifyShopOwner($shop): void
-    
+
     {
         try {
             $shopEmail = $shop->owner_email ?? null;

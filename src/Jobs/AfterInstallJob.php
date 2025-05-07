@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\ThanksMail;
 use Bestdecoders\ShopifyLaravelEnhanced\Services\ShopifyGraphqlService;
-
+use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminAllNotification;
 class AfterInstallJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -117,8 +117,10 @@ class AfterInstallJob implements ShouldQueue
     {
         $adminEmail = config('shopify-enhanced.admin_email');
         if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-            Mail::to($adminEmail)->send(app(ThanksMail::class, [
-                'shopInfo' => $shopInfo,
+            Mail::to($adminEmail)->send(app(AdminAllNotification::class, [
+                'shopDomain' => $this->shop->name,
+                'data' => [],
+                'subject' => 'Shopify App Installed - '. $this->shop->name,
             ]));
             \debug_log("Admin notified about installation for shop: {$this->shop->name}");
         } else {
