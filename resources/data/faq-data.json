@@ -1,0 +1,119 @@
+[
+  {
+    "id": 1,
+    "category": "setup",
+    "question": "Why isn't the app feature appearing on my page?",
+    "answer": "Ensure the app is installed and the embedded theme app extension is activated. Check that your page uses proper structure and contains the necessary elements for the app to function.",
+    "tags": ["installation", "activation", "visibility"],
+    "priority": "high",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 2,
+    "category": "troubleshooting",
+    "question": "Why do pages show no content even after activation?",
+    "answer": "This could be due to excluded pages in settings, incorrect container selection, or missing required elements on the page.",
+    "tags": ["debugging", "missing content", "configuration"],
+    "priority": "high",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 3,
+    "category": "customization",
+    "question": "How to use floating display mode?",
+    "answer": "If your theme template supports it, you can create a sidebar for the feature, adjust the layout for space, and ensure animation classes don't conflict with the app functionality.",
+    "tags": ["floating", "positioning", "sidebar"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 4,
+    "category": "customization",
+    "question": "How can I customize the app's design and colors?",
+    "answer": "Use the app's settings to update colors and styles. For precise RGB values or specific design requirements, contact support for implementation assistance.",
+    "tags": ["styling", "colors", "design"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 5,
+    "category": "setup",
+    "question": "Can I exclude certain pages from the app?",
+    "answer": "Yes, you can exclude specific pages using the settings according to the documentation.",
+    "tags": ["exclusion", "settings", "configuration"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 6,
+    "category": "troubleshooting",
+    "question": "Why is the app pulling empty or placeholder content?",
+    "answer": "This happens with empty or placeholder elements in your page. Remove empty elements or enable the appropriate settings for better functionality.",
+    "tags": ["empty content", "SEO", "content quality"],
+    "priority": "low",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 7,
+    "category": "troubleshooting",
+    "question": "Why do sub-elements not appear under main elements?",
+    "answer": "Ensure the parent element level is included in the selected element types in the settings. Sub-elements only appear if their parent element type is enabled.",
+    "tags": ["hierarchy", "elements", "structure"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 8,
+    "category": "general",
+    "question": "Can the app be added to different page types?",
+    "answer": "Currently, the app supports specific page types. We are working on expanding support to additional page types and sections.",
+    "tags": ["pages", "compatibility", "roadmap"],
+    "priority": "low",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 9,
+    "category": "troubleshooting",
+    "question": "What should I do if the app overlaps with content?",
+    "answer": "Adjust the layout to include proper spacing or consider placing the app feature in a dedicated area to avoid overlapping.",
+    "tags": ["overlap", "layout", "positioning"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 10,
+    "category": "troubleshooting",
+    "question": "Why does the app not appear after switching themes?",
+    "answer": "Switching themes may change the page structure or container selectors. Update settings to reflect the new theme's structure.",
+    "tags": ["themes", "compatibility", "migration"],
+    "priority": "high",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 11,
+    "category": "setup",
+    "question": "How do I provide access to my store for debugging?",
+    "answer": "Grant collaborator access by following the support documentation. Use the contact information provided in the support section for access requests.",
+    "tags": ["support", "debugging", "access"],
+    "priority": "low",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 12,
+    "category": "customization",
+    "question": "Can I include the app feature in specific locations?",
+    "answer": "Yes, by adjusting the layout or using app settings. Contact support for implementation assistance with custom positioning.",
+    "tags": ["positioning", "custom placement", "layout"],
+    "priority": "medium",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 13,
+    "category": "general",
+    "question": "How do I submit feedback or a review for the app?",
+    "answer": "You can leave a review on the Shopify App Store or contact us through the support channels provided in the app.",
+    "tags": ["review", "feedback", "rating"],
+    "priority": "low",
+    "lastUpdated": "2024-01-15"
+  }
+]

@@ -18,7 +18,7 @@ const About = () => {
                 {/* Sidebar takes 1/4th of the screen width */}
                 <BlockStack gap="400">
                     <Card sectioned>
-                        <Sidebar />
+                        <Sidebar currentPath="/about" />
                     </Card>
                 </BlockStack>
 

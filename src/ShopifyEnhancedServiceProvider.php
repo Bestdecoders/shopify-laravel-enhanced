@@ -51,6 +51,9 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             // CSS
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
+
+            // FAQ Data Files
+            __DIR__ . '/../resources/data' => resource_path('data'),
         ], 'shopify-enhanced-assets');
 
 
@@ -78,6 +81,19 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php' =>
                 app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
         ], 'shopify-enhanced-commands');
+
+        // Publish Build Configuration Files
+        $this->publishes([
+            __DIR__ . '/../stubs/vite.config.js' => base_path('vite.config.js'),
+            __DIR__ . '/../stubs/vite.config.extension.js' => base_path('vite.config.extension.js'),
+            __DIR__ . '/../stubs/package.extension.json' => base_path('package.extension.json'),
+        ], 'shopify-enhanced-config');
+
+        // Publish Extension Files
+        $this->publishes([
+            __DIR__ . '/../resources/extension' => resource_path('extension'),
+            __DIR__ . '/../stubs/extensions' => base_path('extensions'),
+        ], 'shopify-enhanced-extensions');
         
     }
 

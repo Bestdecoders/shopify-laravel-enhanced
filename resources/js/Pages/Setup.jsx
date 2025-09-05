@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigateWithToken } from "../hooks/useNavigateWithToken";
-import { useAxios } from "../hooks/useAxios"; // Import the custom axios hook
-import { Page, Button } from "@shopify/polaris";
+import { useAxios } from "../hooks/useAxios";
+import { Page, Button, InlineGrid, BlockStack, Card, Box, Text } from "@shopify/polaris";
+import Sidebar from "../components/sidebar";
 
 const Setup = () => {
     const [currentStep, setCurrentStep] = useState(1); // Track the current step
@@ -67,16 +68,39 @@ const goToNextStep = () => {
     }
 
     return (
-        <Page title="Setup Process">
-            <p>Step {currentStep}: Complete the setup step</p>
+        <Page title="Setup Process" fullWidth>
+            <InlineGrid columns={{ xs: 1, md: '0.5fr 3.5fr' }} gap="400">
+                {/* Sidebar */}
+                <BlockStack gap="400">
+                    <Card sectioned>
+                        <Sidebar currentPath="/setup" />
+                    </Card>
+                </BlockStack>
 
-            {currentStep < 3 ? (
-                <Button onClick={goToNextStep}>Next Step</Button>
-            ) : (
-                <Button primary onClick={completeSetup}>
-                    Complete Setup
-                </Button>
-            )}
+                {/* Main Content */}
+                <BlockStack gap="400">
+                    <Card sectioned>
+                        <Box padding="400">
+                            <BlockStack gap="400">
+                                <Text variant="headingLg" as="h1">
+                                    App Setup Process
+                                </Text>
+                                <Text variant="bodyMd">
+                                    Step {currentStep}: Complete the setup step
+                                </Text>
+                                
+                                {currentStep < 3 ? (
+                                    <Button onClick={goToNextStep}>Next Step</Button>
+                                ) : (
+                                    <Button primary onClick={completeSetup}>
+                                        Complete Setup
+                                    </Button>
+                                )}
+                            </BlockStack>
+                        </Box>
+                    </Card>
+                </BlockStack>
+            </InlineGrid>
         </Page>
     );
 };

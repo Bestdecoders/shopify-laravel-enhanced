@@ -1,0 +1,27 @@
+{
+    "name": "shopify-enhanced-extension",
+    "version": "1.0.0",
+    "description": "Extension build configuration for Shopify Enhanced Laravel package",
+    "private": true,
+    "scripts": {
+        "build:extension": "vite build --config vite.config.extension.js",
+        "dev:extension": "vite build --config vite.config.extension.js --watch",
+        "preview:extension": "vite preview --config vite.config.extension.js"
+    },
+    "devDependencies": {
+        "vite": "^5.0.0",
+        "@rollup/plugin-terser": "^0.4.4"
+    },
+    "files": [
+        "extensions/",
+        "resources/extension/",
+        "vite.config.extension.js"
+    ],
+    "keywords": [
+        "shopify",
+        "laravel",
+        "extension",
+        "vite",
+        "build"
+    ]
+}

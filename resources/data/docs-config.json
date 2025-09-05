@@ -1,0 +1,94 @@
+{
+  "appConfig": {
+    "appName": "Your App Name",
+    "appDescription": "your app"
+  },
+  "documentation": {
+    "title": "Documentation",
+    "description": "Complete guide to using {appName}",
+    "sections": [
+      {
+        "id": "getting-started",
+        "title": "Getting Started",
+        "icon": "🚀",
+        "pages": [
+          {
+            "id": "introduction",
+            "title": "Introduction",
+            "file": "getting-started/introduction.md",
+            "description": "Welcome to the documentation"
+          },
+          {
+            "id": "installation",
+            "title": "Installation Guide",
+            "file": "getting-started/installation.md",
+            "description": "How to install and set up the app"
+          },
+          {
+            "id": "quick-start",
+            "title": "Quick Start",
+            "file": "getting-started/quick-start.md",
+            "description": "Get up and running in 5 minutes"
+          }
+        ]
+      },
+      {
+        "id": "configuration",
+        "title": "Configuration",
+        "icon": "⚙️",
+        "pages": [
+          {
+            "id": "basic-settings",
+            "title": "Basic Settings",
+            "file": "configuration/basic-settings.md",
+            "description": "Configure basic app settings"
+          },
+          {
+            "id": "advanced-options",
+            "title": "Advanced Options",
+            "file": "configuration/advanced-options.md",
+            "description": "Advanced configuration options"
+          }
+        ]
+      },
+      {
+        "id": "features",
+        "title": "Features",
+        "icon": "✨",
+        "pages": [
+          {
+            "id": "core-features",
+            "title": "Core Features",
+            "file": "features/core-features.md",
+            "description": "Main app functionality"
+          },
+          {
+            "id": "customization",
+            "title": "Customization",
+            "file": "features/customization.md",
+            "description": "How to customize the app"
+          }
+        ]
+      },
+      {
+        "id": "troubleshooting",
+        "title": "Troubleshooting",
+        "icon": "🔧",
+        "pages": [
+          {
+            "id": "common-issues",
+            "title": "Common Issues",
+            "file": "troubleshooting/common-issues.md",
+            "description": "Solutions to common problems"
+          },
+          {
+            "id": "faq",
+            "title": "FAQ",
+            "file": "troubleshooting/faq.md",
+            "description": "Frequently asked questions"
+          }
+        ]
+      }
+    ]
+  }
+}

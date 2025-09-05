@@ -1,0 +1,85 @@
+{
+  "appConfig": {
+    "appName": "Your App Name",
+    "appDescription": "your app",
+    "featureDescription": "the main functionality"
+  },
+  "dashboard": {
+    "welcomeCard": {
+      "title": "Welcome to {appName}!",
+      "subtitle": "Get started with {appDescription} setup and configuration",
+      "showGettingStarted": true
+    },
+    "quickActions": [
+      {
+        "id": "setup",
+        "title": "Complete Setup",
+        "description": "Configure your app settings and preferences",
+        "icon": "SettingsIcon",
+        "url": "/setup",
+        "primary": true,
+        "enabled": true
+      },
+      {
+        "id": "customize",
+        "title": "Customize Appearance",
+        "description": "Personalize the look and feel",
+        "icon": "ColorIcon",
+        "url": "/about",
+        "primary": false,
+        "enabled": true
+      },
+      {
+        "id": "pricing",
+        "title": "Upgrade Plan",
+        "description": "Unlock advanced features",
+        "icon": "CreditCardIcon",
+        "url": "/pricing",
+        "primary": false,
+        "enabled": true
+      }
+    ],
+    "statsCards": [
+      {
+        "id": "total_usage",
+        "title": "Total Usage",
+        "value": "0",
+        "change": "+0%",
+        "trend": "positive",
+        "description": "Overall app usage statistics"
+      },
+      {
+        "id": "active_features",
+        "title": "Active Features",
+        "value": "0",
+        "change": "+0%",
+        "trend": "neutral",
+        "description": "Number of enabled features"
+      },
+      {
+        "id": "plan_status",
+        "title": "Plan Status",
+        "value": "Free",
+        "change": "",
+        "trend": "neutral",
+        "description": "Current subscription plan"
+      }
+    ],
+    "helpCard": {
+      "title": "Need Help?",
+      "description": "Our support team is here to help you succeed",
+      "actions": [
+        {
+          "label": "Contact Support",
+          "url": "/support",
+          "primary": true
+        },
+        {
+          "label": "View FAQ",
+          "url": "/faq",
+          "primary": false
+        }
+      ]
+    }
+  }
+}

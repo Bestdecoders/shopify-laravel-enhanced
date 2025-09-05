@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Frame, Navigation } from "@shopify/polaris";
+import { Frame, Navigation, Spinner, Box, Text } from "@shopify/polaris";
 import {
     HomeIcon,
     ChartVerticalIcon,
@@ -10,24 +10,66 @@ import {
     NotificationIcon,
     UploadIcon,
     ProductIcon,
+    CreditCardIcon,
+    SettingsIcon,
+    ExternalIcon
 } from "@shopify/polaris-icons";
 import { getSessionToken } from "@shopify/app-bridge-utils";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { select } from "@shopify/app-bridge/actions/ResourcePicker";
-import { disable } from "@shopify/app-bridge/actions/LeaveConfirmation";
+import { router } from "@inertiajs/react";
 
-const Sidebar = ({
-    backendData = {
-        somethingNew: true,
-        extensionActivated: false,
-        extensionInstalled: true,
-        liveChatEnabled: false,
-        moveable: false,
-    },
-}) => {
-    const app = useAppBridge(); // Initialize App Bridge
+// =============================================================================
+// ⚠️  SIDEBAR CONFIGURATION - Data is loaded from JSON
+// =============================================================================
+// Sidebar navigation is loaded from resources/data/sidebar-config.json
+// To customize for your app, edit the JSON file instead of this component
+// =============================================================================
+
+// Icon mapping for JSON configuration
+const iconMap = {
+    HomeIcon,
+    ChartVerticalIcon,
+    CodeIcon,
+    QuestionCircleIcon,
+    ChatIcon,
+    ThumbsUpIcon,
+    NotificationIcon,
+    UploadIcon,
+    ProductIcon,
+    CreditCardIcon,
+    SettingsIcon,
+    ExternalIcon
+};
+
+const Sidebar = ({ currentPath = "/" }) => {
+    const app = useAppBridge();
     const [host, setHost] = useState(null);
     const [token, setToken] = useState(null);
+    const [sidebarConfig, setSidebarConfig] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Load sidebar configuration
+    useEffect(() => {
+        const loadSidebarConfig = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('/resources/data/sidebar-config.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load sidebar config');
+                }
+                const config = await response.json();
+                setSidebarConfig(config);
+            } catch (err) {
+                console.error('Error loading sidebar config:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadSidebarConfig();
+    }, []);
 
     // Fetch and set host and token
     useEffect(() => {
@@ -39,124 +81,107 @@ const Sidebar = ({
 
         const fetchToken = async () => {
             try {
-                const sessionToken = await getSessionToken(app); // Fetch Shopify session token
+                const sessionToken = await getSessionToken(app);
                 setToken(sessionToken);
             } catch (error) {
                 console.error("Error fetching token:", error);
             }
         };
 
-        fetchToken();
+        if (app) {
+            fetchToken();
+        }
     }, [app]);
 
-    // Update URLs dynamically with host and token
-    const updateUrlWithHostAndToken = (url) => {
-        if (url === "#") {
-            return "#"; // Do not update placeholder URLs
+    const handleNavigation = (url, external = false) => {
+        if (external) {
+            window.open(url, "_blank");
+        } else {
+            router.visit(url);
         }
-
-        if (!host || !token) {
-            return url; // Return original URL if host or token is not available
-        }
-
-        return `${url}?host=${host}&token=${token}`; // Append host and token to the URL
     };
 
-    // Navigation items with updated URLs
-    const primaryNavigation = [
-      {
-          url: updateUrlWithHostAndToken("/home"),
-          label: "Dashboard",
-          icon: HomeIcon,
-          key: "dashboard", // Unique key
-      },
-      {
-          url: "#",
-          label: "Setup",
-          icon: CodeIcon,
-          selected: true,
-          key: "setup", // Unique key
-          subNavigationItems: [
-              {
-                  url: "https://your-external-activation-link.com", // External link to activate the extension
-                  label: "Activate Theme Extension",
-                  target: "_blank", // Open in a new tab
-                  key: "activate-extension", // Unique key
-              },
-              {
-                  url: updateUrlWithHostAndToken("/about"),
-                  label: "Select Display Style", // Choose display style (sidebar, button, popup, inline)
-                  key: "choose-style", // Unique key
-              },
-              {
-                  url: updateUrlWithHostAndToken("/create-sizechart"),
-                  label: "Create Size Chart", // Create size chart
-                  key: "create-sizechart", // Unique key
-              },
-          ],
-      },
-      {
-          url: "#",
-          label: "Import/Export",
-          icon: UploadIcon,
-          key: "import-export", // Unique key
-          subNavigationItems: [
-              {
-                  url: updateUrlWithHostAndToken("/import"),
-                  label: "Import Data",
-                  disabled: !backendData.moveable,
-                  key: "import-data", // Unique key
-              },
-              {
-                  url: updateUrlWithHostAndToken("/export"),
-                  label: "Export Data",
-                  disabled: !backendData.moveable,
-                  key: "export-data", // Unique key
-              },
-          ],
-      },
-  ];
-  
-  const secondaryNavigation = [
-      {
-          url: updateUrlWithHostAndToken("/help-center"),
-          label: "Help Center",
-          icon: QuestionCircleIcon,
-          key: "help-center", // Unique key
-      },
-      backendData.liveChatEnabled && {
-          url: updateUrlWithHostAndToken("/live-chat"),
-          label: "Start a Live Chat",
-          icon: ChatIcon,
-          key: "live-chat", // Unique key
-      },
-      {
-          url: updateUrlWithHostAndToken("/feedback"),
-          label: "Feedback",
-          icon: ThumbsUpIcon,
-          key: "feedback", // Unique key
-      },
-      backendData.somethingNew && {
-          url: updateUrlWithHostAndToken("/whats-new"),
-          label: "What's New",
-          icon: NotificationIcon,
-          key: "whats-new", // Unique key
-      },
-  ].filter(Boolean); // Ensure no null values
+    // Loading state
+    if (loading) {
+        return (
+            <Box padding="400" textAlign="center">
+                <Spinner size="small" />
+                <Box paddingBlockStart="200">
+                    <Text variant="caption" tone="subdued">
+                        Loading navigation...
+                    </Text>
+                </Box>
+            </Box>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <Box padding="400" textAlign="center">
+                <Text variant="bodyMd" tone="critical">
+                    Failed to load navigation
+                </Text>
+            </Box>
+        );
+    }
+
+    const { navigation = {} } = sidebarConfig;
+    const { primary = [], secondary = [] } = navigation;
+
+    // Build navigation items from config
+    const buildNavigationItems = (items) => {
+        return items.map(item => {
+            const icon = iconMap[item.icon] || HomeIcon;
+            const isSelected = currentPath === item.url || 
+                              (item.subItems && item.subItems.some(sub => currentPath === sub.url));
+            
+            const baseItem = {
+                key: item.id,
+                label: item.label,
+                icon: icon,
+                selected: isSelected,
+            };
+
+            if (item.subItems) {
+                // Item with sub-navigation
+                baseItem.subNavigationItems = item.subItems.map(subItem => ({
+                    key: subItem.id,
+                    label: subItem.label,
+                    url: subItem.url,
+                    disabled: subItem.disabled || false,
+                    onClick: () => handleNavigation(subItem.url, subItem.external)
+                }));
+            } else {
+                // Simple item
+                baseItem.url = item.url;
+                baseItem.onClick = () => handleNavigation(item.url, item.external);
+            }
+
+            return baseItem;
+        });
+    };
+
+    const primaryNavigation = buildNavigationItems(primary);
+    const secondaryNavigation = buildNavigationItems(secondary.filter(item => 
+        item.enabled !== false
+    ));
   
 
     return (
-        <div className="fixed left-10 top-20 bor">
-            <Frame >
-                <Navigation location="/" >
-                    <Navigation.Section items={primaryNavigation} />
+        <Box>
+            <Navigation location={currentPath}>
+                <Navigation.Section 
+                    items={primaryNavigation} 
+                />
+                {secondaryNavigation.length > 0 && (
                     <Navigation.Section
-                        title="Connect"
+                        title="Support & Help"
                         items={secondaryNavigation}
                     />
-                </Navigation>
-            </Frame>
-        </div>
+                )}
+            </Navigation>
+        </Box>
     );
 };
 

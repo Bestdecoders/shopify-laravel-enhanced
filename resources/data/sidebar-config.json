@@ -1,0 +1,97 @@
+{
+  "appConfig": {
+    "appName": "Your App Name",
+    "appDescription": "your app"
+  },
+  "navigation": {
+    "primary": [
+      {
+        "id": "dashboard",
+        "url": "/home",
+        "label": "Dashboard",
+        "icon": "HomeIcon",
+        "description": "Overview and main controls"
+      },
+      {
+        "id": "setup",
+        "label": "Setup",
+        "icon": "CodeIcon", 
+        "description": "Configure and customize your app",
+        "subItems": [
+          {
+            "id": "activate-extension",
+            "url": "https://your-activation-link.com",
+            "label": "Activate Extension",
+            "external": true,
+            "description": "Enable the theme extension"
+          },
+          {
+            "id": "settings",
+            "url": "/about",
+            "label": "App Settings",
+            "description": "Configure app preferences"
+          },
+          {
+            "id": "customization",
+            "url": "/setup",
+            "label": "Customization",
+            "description": "Customize appearance and behavior"
+          }
+        ]
+      },
+      {
+        "id": "pricing",
+        "url": "/pricing",
+        "label": "Pricing Plans",
+        "icon": "CreditCardIcon",
+        "description": "Manage your subscription"
+      },
+      {
+        "id": "settings",
+        "url": "/settings",
+        "label": "Settings",
+        "icon": "SettingsIcon",
+        "description": "Configure app settings and behavior"
+      },
+      {
+        "id": "documentation",
+        "url": "/docs",
+        "label": "Documentation",
+        "icon": "BookIcon",
+        "description": "Complete app documentation"
+      }
+    ],
+    "secondary": [
+      {
+        "id": "support",
+        "url": "/support",
+        "label": "Support",
+        "icon": "QuestionCircleIcon",
+        "description": "Get help and support"
+      },
+      {
+        "id": "faq",
+        "url": "/faq",
+        "label": "FAQ",
+        "icon": "ChatIcon",
+        "description": "Frequently asked questions"
+      },
+      {
+        "id": "feedback",
+        "url": "/feedback",
+        "label": "Feedback",
+        "icon": "ThumbsUpIcon",
+        "description": "Share your thoughts",
+        "enabled": true
+      },
+      {
+        "id": "whats-new",
+        "url": "/whats-new", 
+        "label": "What's New",
+        "icon": "NotificationIcon",
+        "description": "Latest updates and features",
+        "enabled": true
+      }
+    ]
+  }
+}

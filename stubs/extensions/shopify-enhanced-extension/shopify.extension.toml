@@ -1,0 +1,55 @@
+# Shopify Enhanced Extension Configuration
+# This file defines the extension metadata and capabilities
+
+api_version = "2024-07"
+
+[[extensions]]
+type = "admin_action"
+name = "shopify-enhanced-admin-action"
+handle = "shopify-enhanced-admin-action"
+
+[extensions.action]
+label = "Enhanced Actions"
+description = "Additional actions provided by Shopify Enhanced package"
+url = "/admin/enhanced-actions"
+
+[[extensions.action.supported_targets]]
+target = "admin.product-details.action.render"
+
+[[extensions.action.supported_targets]]
+target = "admin.order-details.action.render"
+
+[[extensions]]
+type = "ui_extension" 
+name = "shopify-enhanced-ui"
+handle = "shopify-enhanced-ui"
+
+[extensions.ui]
+description = "UI enhancements for Shopify admin"
+
+[[extensions.ui.extension_points]]
+target = "admin.product-details.block.render"
+
+[[extensions.ui.extension_points]]
+target = "admin.order-details.block.render"
+
+[[extensions]]
+type = "theme_app_extension"
+name = "shopify-enhanced-theme"
+handle = "shopify-enhanced-theme"
+
+[extensions.theme]
+description = "Theme extensions for enhanced functionality"
+
+[[extensions.theme.extension_points]]
+target = "product-form"
+
+[[extensions.theme.extension_points]] 
+target = "cart"
+
+[build]
+command = "npm run build:extension"
+path = "extensions/shopify-enhanced-extension"
+
+[build.watch]
+command = "npm run dev:extension"

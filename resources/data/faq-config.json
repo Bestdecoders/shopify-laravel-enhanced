@@ -1,0 +1,29 @@
+{
+  "appConfig": {
+    "appName": "Your App Name",
+    "appDescription": "your app",
+    "featureDescription": "the main functionality"
+  },
+  "categories": {
+    "setup": {
+      "title": "Setup & Installation",
+      "icon": "⚙️",
+      "color": "info"
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "icon": "🔧",
+      "color": "warning"
+    },
+    "customization": {
+      "title": "Customization",
+      "icon": "🎨",
+      "color": "success"
+    },
+    "general": {
+      "title": "General Questions",
+      "icon": "❓",
+      "color": "subdued"
+    }
+  }
+}
