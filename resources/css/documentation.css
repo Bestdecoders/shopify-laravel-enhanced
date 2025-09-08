@@ -1,0 +1,198 @@
+/* Documentation Styling */
+
+.documentation-content {
+    /* Ensure proper spacing for all elements */
+    line-height: 1.6;
+}
+
+/* Code blocks with syntax highlighting */
+.documentation-content pre {
+    background-color: var(--p-color-bg-surface-secondary) !important;
+    border: 1px solid var(--p-color-border);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+}
+
+/* Inline code styling */
+.documentation-content code:not(pre code) {
+    background-color: var(--p-color-bg-surface-secondary);
+    color: var(--p-color-text);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-size: 0.875em;
+}
+
+/* Tables */
+.documentation-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    border: 1px solid var(--p-color-border);
+}
+
+.documentation-content th,
+.documentation-content td {
+    border: 1px solid var(--p-color-border);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.documentation-content th {
+    background-color: var(--p-color-bg-surface-secondary);
+    font-weight: 600;
+}
+
+/* Lists */
+.documentation-content ul,
+.documentation-content ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.documentation-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Blockquotes */
+.documentation-content blockquote {
+    border-left: 4px solid var(--p-color-border-info);
+    background-color: var(--p-color-bg-surface-secondary);
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 4px;
+    font-style: italic;
+}
+
+/* Links */
+.documentation-content a {
+    color: var(--p-color-text-link);
+    text-decoration: none;
+}
+
+.documentation-content a:hover {
+    text-decoration: underline;
+}
+
+/* Images */
+.documentation-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+}
+
+/* Horizontal rules */
+.documentation-content hr {
+    border: none;
+    border-top: 1px solid var(--p-color-border);
+    margin: 2rem 0;
+}
+
+/* Responsive tables */
+@media (max-width: 768px) {
+    .documentation-content table {
+        font-size: 0.875rem;
+    }
+    
+    .documentation-content th,
+    .documentation-content td {
+        padding: 0.5rem;
+    }
+}
+
+/* Syntax highlighting improvements */
+.documentation-content .hljs {
+    background: var(--p-color-bg-surface-secondary) !important;
+    color: var(--p-color-text) !important;
+}
+
+/* Custom highlight.js theme adjustments for Shopify Polaris */
+.documentation-content .hljs-comment,
+.documentation-content .hljs-quote {
+    color: var(--p-color-text-subdued);
+    font-style: italic;
+}
+
+.documentation-content .hljs-keyword,
+.documentation-content .hljs-selector-tag,
+.documentation-content .hljs-type {
+    color: #d73a49;
+    font-weight: bold;
+}
+
+.documentation-content .hljs-string,
+.documentation-content .hljs-number,
+.documentation-content .hljs-literal {
+    color: #032f62;
+}
+
+.documentation-content .hljs-function .hljs-title {
+    color: #6f42c1;
+    font-weight: bold;
+}
+
+.documentation-content .hljs-variable,
+.documentation-content .hljs-attr {
+    color: #e36209;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .documentation-content .hljs-keyword,
+    .documentation-content .hljs-selector-tag,
+    .documentation-content .hljs-type {
+        color: #ff7b72;
+    }
+
+    .documentation-content .hljs-string,
+    .documentation-content .hljs-number,
+    .documentation-content .hljs-literal {
+        color: #a5d6ff;
+    }
+
+    .documentation-content .hljs-function .hljs-title {
+        color: #d2a8ff;
+    }
+
+    .documentation-content .hljs-variable,
+    .documentation-content .hljs-attr {
+        color: #ffa657;
+    }
+}
+
+/* Table of contents active state */
+.toc-active {
+    background-color: var(--p-color-bg-surface-selected) !important;
+    color: var(--p-color-text-on-color) !important;
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus states for accessibility */
+.documentation-content *:focus {
+    outline: 2px solid var(--p-color-border-focus);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .documentation-content {
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+    
+    .documentation-content pre,
+    .documentation-content code {
+        background: #f8f9fa !important;
+        border: 1px solid #dee2e6 !important;
+    }
+}

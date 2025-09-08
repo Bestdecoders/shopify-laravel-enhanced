@@ -1,0 +1,38 @@
+[
+  {
+    "id": "getting-started",
+    "title": "Getting Started",
+    "description": "Quick start guide to set up your first size charts",
+    "category": "Basics",
+    "order": 1,
+    "file": "getting-started.md",
+    "published": true
+  },
+  {
+    "id": "size-chart-creation",
+    "title": "Size Chart Creation Guide",
+    "description": "Detailed guide on creating effective size charts",
+    "category": "Setup",
+    "order": 2,
+    "file": "size-chart-creation.md",
+    "published": true
+  },
+  {
+    "id": "display-customization",
+    "title": "Display Customization",
+    "description": "Customize appearance and behavior of your size charts",
+    "category": "Customization",
+    "order": 3,
+    "file": "display-customization.md",
+    "published": true
+  },
+  {
+    "id": "troubleshooting",
+    "title": "Troubleshooting Guide",
+    "description": "Common issues and solutions",
+    "category": "Support",
+    "order": 4,
+    "file": "troubleshooting.md",
+    "published": true
+  }
+]

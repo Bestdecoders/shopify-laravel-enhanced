@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { getSessionToken } from "@shopify/app-bridge-utils";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
 export const useAxios = () => {
-    const app = useAppBridge();
+    const shopify = useAppBridge();
     const host =
         new URLSearchParams(window.location.search).get("host") ||
         window.__SHOPIFY_HOST;
@@ -14,9 +13,14 @@ export const useAxios = () => {
 
         const interceptor = axios.interceptors.request.use(async (config) => {
             try {
-                const token = await getSessionToken(app);
+                const tokenPromise = shopify.idToken();
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Token request timeout')), 5000)
+                );
+                const token = await Promise.race([tokenPromise, timeoutPromise]);
+                
                 config.headers.Authorization = `Bearer ${token}`;
-                config.params = { ...config.params, host }; // Automatically include host in the request params
+                config.params = { ...config.params, host, token }; // Add token parameter for Laravel
                 return config;
             } catch (error) {
                 console.error("Failed to get session token:", error);
@@ -41,7 +45,7 @@ export const useAxios = () => {
             axios.interceptors.request.eject(interceptor);
             axios.interceptors.response.eject(responseInterceptor);
         };
-    }, [app, host]);
+    }, [shopify, host]);
 
     return axios;
 };

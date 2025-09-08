@@ -46,11 +46,13 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
             __DIR__ . '/../resources/js/components' => resource_path('js/components'),
             __DIR__ . '/../resources/js/pages' => resource_path('js/pages'),
+            __DIR__ . '/../resources/js/Pages' => resource_path('js/Pages'),
             __DIR__ . '/../resources/js/app.jsx' => resource_path('js/app.jsx'),
 
             // CSS
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
+            __DIR__ . '/../resources/css/documentation.css' => resource_path('css/documentation.css'),
         ], 'shopify-enhanced-assets');
 
 
@@ -78,6 +80,16 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php' =>
                 app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
         ], 'shopify-enhanced-commands');
+
+        // Publish FAQ Data
+        $this->publishes([
+            __DIR__ . '/../storage/faq.json' => storage_path('app/faq.json'),
+        ], 'shopify-enhanced-faq');
+
+        // Publish Documentation
+        $this->publishes([
+            __DIR__ . '/../storage/docs' => storage_path('app/docs'),
+        ], 'shopify-enhanced-docs');
         
     }
 

@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "question": "How do I create my first size chart ?",
+    "answer": "To create your first size chart, navigate to the 'Setup' menu in the sidebar and click on 'Create Size Chart'. You can then use our table editor to build your size chart with measurements for different sizes. Make sure to include all relevant measurements like chest, waist, hip, and length as needed for your products.",
+    "category": "Getting Started",
+    "tags": ["setup", "create", "beginner", "tutorial"],
+    "priority": "high",
+    "published": true
+  },
+  {
+    "id": 2,
+    "question": "How do I assign a size chart to multiple products?",
+    "answer": "You can assign size charts to products in several ways: 1) During size chart creation, select the products you want to assign it to. 2) Go to your existing size chart and use the 'Assign to Products' feature. 3) Use bulk assignment by selecting multiple products and choosing the size chart. You can also assign by product collections or tags for easier management.",
+    "category": "Product Management",
+    "tags": ["products", "assignment", "bulk", "collections"],
+    "priority": "high",
+    "published": true
+  },
+  {
+    "id": 3,
+    "question": "What display styles are available for size charts?",
+    "answer": "We offer several display options: 1) **Popup Modal** - Opens in a overlay when customer clicks the size guide button. 2) **Inline Display** - Shows the size chart directly on the product page. 3) **Sidebar** - Slides out from the side of the page. 4) **Tab Integration** - Adds a size chart tab to your product tabs. You can customize the appearance, button text, and positioning for each style.",
+    "category": "Display & Customization",
+    "tags": ["display", "popup", "inline", "sidebar", "customization"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 4,
+    "question": "Can I import size charts from a CSV file?",
+    "answer": "Yes! You can import size charts from CSV files. Go to Import/Export in the sidebar and select 'Import Data'. Upload your CSV file with the proper format: first row should contain size names, subsequent rows should contain measurement labels and values. We also provide a template CSV file you can download to ensure proper formatting.",
+    "category": "Import/Export",
+    "tags": ["import", "csv", "data", "bulk", "template"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 5,
+    "question": "How do I customize the appearance of my size charts?",
+    "answer": "You can customize your size charts in the 'Display Settings' section. Options include: changing colors and fonts, adjusting table borders and spacing, customizing button text and styling, adding your brand logo, setting up measurement units (cm/inches), and creating custom CSS for advanced styling. All changes are previewed in real-time.",
+    "category": "Display & Customization",
+    "tags": ["customization", "styling", "colors", "fonts", "css"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 6,
+    "question": "Why isn't my size chart showing on the product page?",
+    "answer": "If your size chart isn't appearing, check these common issues: 1) Ensure the size chart is assigned to the product. 2) Verify the theme extension is activated in your theme settings. 3) Check if the display style is properly configured. 4) Make sure the size chart is published and not in draft mode. 5) Clear your browser cache and check on an incognito/private window. Contact support if issues persist.",
+    "category": "Troubleshooting",
+    "tags": ["troubleshooting", "not showing", "theme", "activation", "cache"],
+    "priority": "high",
+    "published": true
+  },
+  {
+    "id": 7,
+    "question": "Can customers provide size feedback or reviews?",
+    "answer": "While the size chart app doesn't directly collect customer feedback, we recommend: 1) Using your store's review system to gather size feedback. 2) Creating size-specific product variants if needed. 3) Adding a 'Size Feedback' contact form. 4) Monitoring return reasons related to sizing. 5) Using analytics to track size chart usage and optimize accordingly.",
+    "category": "Customer Experience",
+    "tags": ["feedback", "reviews", "customer", "analytics", "optimization"],
+    "priority": "low",
+    "published": true
+  },
+  {
+    "id": 8,
+    "question": "How do I set up conversion between measurement units?",
+    "answer": "The app includes automatic unit conversion features: 1) Go to Settings > Units and select your primary measurement unit (cm or inches). 2) Enable 'Show Both Units' to display conversions automatically. 3) Customers can toggle between units using the unit switcher button. 4) You can also create separate charts for different regions if you prefer manual control over measurements.",
+    "category": "Settings & Configuration",
+    "tags": ["units", "conversion", "cm", "inches", "international"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 9,
+    "question": "Is there a mobile-responsive version of the size charts?",
+    "answer": "Yes, all size charts are fully mobile-responsive by default. Features include: 1) Optimized table layouts that work on small screens. 2) Touch-friendly interactions and scrolling. 3) Responsive popup modals that fit mobile screens. 4) Simplified navigation for mobile users. 5) Fast loading times on mobile networks. You can preview mobile appearance in the display settings.",
+    "category": "Mobile & Responsive",
+    "tags": ["mobile", "responsive", "touch", "optimization"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 10,
+    "question": "How do I backup and restore my size chart data?",
+    "answer": "To backup your data: 1) Go to Import/Export and click 'Export All Data' to download a complete backup. 2) Individual size charts can be exported as CSV or JSON files. 3) Use the 'Backup Settings' to create scheduled backups. To restore: 1) Use the 'Import Data' feature with your backup files. 2) Contact support for assistance with large restorations. We recommend regular backups before making major changes.",
+    "category": "Import/Export",
+    "tags": ["backup", "restore", "export", "data protection"],
+    "priority": "low",
+    "published": true
+  },
+  {
+    "id": 11,
+    "question": "Can I create different size charts for different product categories?",
+    "answer": "Absolutely! You can create multiple size charts for different product types: 1) Create separate charts for clothing, shoes, accessories, etc. 2) Use category-based assignment rules. 3) Set up automatic assignment based on product tags or collections. 4) Create brand-specific size charts if you carry multiple brands. Each chart can have its own measurements, styling, and display settings.",
+    "category": "Product Management",
+    "tags": ["categories", "multiple charts", "collections", "brands"],
+    "priority": "medium",
+    "published": true
+  },
+  {
+    "id": 12,
+    "question": "How do I handle international sizing differences?",
+    "answer": "For international sizing: 1) Create region-specific size charts (US, EU, UK, etc.). 2) Use the geo-location feature to show appropriate charts automatically. 3) Enable the size conversion tool for automatic translations. 4) Add multiple size columns (US Size, EU Size, UK Size) in one chart. 5) Use clear labeling and include size conversion notes. Consider creating a master sizing guide for reference.",
+    "category": "International & Localization",
+    "tags": ["international", "regions", "conversion", "geo-location"],
+    "priority": "medium",
+    "published": false
+  }
+]
