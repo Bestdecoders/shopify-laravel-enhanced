@@ -59,7 +59,96 @@ export function Pricing() {
 
     const isCurrentPlan = (planId) => currentPlan?.id === planId;
     const isUpgrade = (plan) => plan.price > (currentPlan?.price || 0);
+    const isRecommended = (planId) => {
+        const suggestPlan = import.meta.env.VITE_SUGGEST_PLAN;
+        return suggestPlan && parseInt(suggestPlan) === planId;
+    };
     const isPopular = (plan) => plan.price > 0 && !isCurrentPlan(plan.id);
+
+    const renderPlanCard = (plan) => (
+        <Card sectioned key={plan.id}>
+            <Box padding="400">
+                <BlockStack gap="400">
+                    {/* Plan Header */}
+                    <Box textAlign="center">
+                        <InlineStack gap="200" align="center" blockAlign="center">
+                            <Text variant="headingLg" as="h3">
+                                {plan.name}
+                            </Text>
+                            {isCurrentPlan(plan.id) && (
+                                <Badge tone="success">Current</Badge>
+                            )}
+                            {isRecommended(plan.id) && !isCurrentPlan(plan.id) && (
+                                <Badge tone="attention">Recommended</Badge>
+                            )}
+                            {isPopular(plan) && !isRecommended(plan.id) && (
+                                <Badge tone="info">Popular</Badge>
+                            )}
+                        </InlineStack>
+                    </Box>
+
+                    {/* Price */}
+                    <Box textAlign="center" padding="300" background="bg-surface-secondary" borderRadius="200">
+                        <Text variant="displaySm" as="p" fontWeight="bold">
+                            {formatPrice(plan)}
+                        </Text>
+                        {plan.price > 0 && (
+                            <Text variant="bodySm" tone="subdued">
+                                Billed {plan.interval === "EVERY_30_DAYS" ? "monthly" : "annually"}
+                            </Text>
+                        )}
+                    </Box>
+
+                    {/* Description */}
+                    <Box>
+                        <Text variant="bodyMd" tone="subdued" alignment="center">
+                            {plan.terms || "Perfect for getting started with Table of Contents"}
+                        </Text>
+                    </Box>
+
+                    {/* Features (if available) */}
+                    {plan.features && plan.features.length > 0 && (
+                        <Box>
+                            <Text variant="headingSm" as="h4">
+                                Features included:
+                            </Text>
+                            <Box paddingBlockStart="200">
+                                <List type="bullet">
+                                    {plan.features.map((feature, index) => (
+                                        <List.Item key={index}>
+                                            <Text variant="bodySm">{feature}</Text>
+                                        </List.Item>
+                                    ))}
+                                </List>
+                            </Box>
+                        </Box>
+                    )}
+
+                    {/* Action Button */}
+                    <Box paddingBlockStart="300">
+                        {isCurrentPlan(plan.id) ? (
+                            <Button 
+                                fullWidth 
+                                disabled 
+                                size="large"
+                            >
+                                Current Plan
+                            </Button>
+                        ) : (
+                            <Button
+                                fullWidth
+                                primary={isUpgrade(plan)}
+                                size="large"
+                                onClick={() => handleSubscribe(plan.id)}
+                            >
+                                {isUpgrade(plan) ? "Upgrade Plan" : "Switch Plan"}
+                            </Button>
+                        )}
+                    </Box>
+                </BlockStack>
+            </Box>
+        </Card>
+    );
 
     if (loading) {
         return (
@@ -119,91 +208,21 @@ export function Pricing() {
 
             {/* Pricing Cards */}
             <Box padding="400">
-                <InlineStack gap="400" wrap={true} align="stretch">
-                    {plans.map((plan) => (
-                        <Box key={plan.id} minWidth="300px" style={{ flex: "1" }}>
-                            <Card sectioned>
-                                <Box padding="400">
-                                    <BlockStack gap="400">
-                                        {/* Plan Header */}
-                                        <Box textAlign="center">
-                                            <InlineStack gap="200" align="center" blockAlign="center">
-                                                <Text variant="headingLg" as="h3">
-                                                    {plan.name}
-                                                </Text>
-                                                {isCurrentPlan(plan.id) && (
-                                                    <Badge tone="success">Current</Badge>
-                                                )}
-                                                {isPopular(plan) && (
-                                                    <Badge tone="info">Popular</Badge>
-                                                )}
-                                            </InlineStack>
-                                        </Box>
-
-                                        {/* Price */}
-                                        <Box textAlign="center" padding="300" background="bg-surface-secondary" borderRadius="200">
-                                            <Text variant="displaySm" as="p" fontWeight="bold">
-                                                {formatPrice(plan)}
-                                            </Text>
-                                            {plan.price > 0 && (
-                                                <Text variant="bodySm" tone="subdued">
-                                                    Billed {plan.interval === "EVERY_30_DAYS" ? "monthly" : "annually"}
-                                                </Text>
-                                            )}
-                                        </Box>
-
-                                        {/* Description */}
-                                        <Box>
-                                            <Text variant="bodyMd" tone="subdued" alignment="center">
-                                                {plan.terms || "Perfect for getting started with Table of Contents"}
-                                            </Text>
-                                        </Box>
-
-                                        {/* Features (if available) */}
-                                        {plan.features && plan.features.length > 0 && (
-                                            <Box>
-                                                <Text variant="headingSm" as="h4">
-                                                    Features included:
-                                                </Text>
-                                                <Box paddingBlockStart="200">
-                                                    <List type="bullet">
-                                                        {plan.features.map((feature, index) => (
-                                                            <List.Item key={index}>
-                                                                <Text variant="bodySm">{feature}</Text>
-                                                            </List.Item>
-                                                        ))}
-                                                    </List>
-                                                </Box>
-                                            </Box>
-                                        )}
-
-                                        {/* Action Button */}
-                                        <Box paddingBlockStart="300">
-                                            {isCurrentPlan(plan.id) ? (
-                                                <Button 
-                                                    fullWidth 
-                                                    disabled 
-                                                    size="large"
-                                                >
-                                                    Current Plan
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    fullWidth
-                                                    primary={isUpgrade(plan)}
-                                                    size="large"
-                                                    onClick={() => handleSubscribe(plan.id)}
-                                                >
-                                                    {isUpgrade(plan) ? "Upgrade Plan" : "Switch Plan"}
-                                                </Button>
-                                            )}
-                                        </Box>
-                                    </BlockStack>
-                                </Box>
-                            </Card>
+                {plans.length === 1 ? (
+                    <Box display="flex" justifyContent="center">
+                        <Box minWidth="400px" maxWidth="500px">
+                            {renderPlanCard(plans[0])}
                         </Box>
-                    ))}
-                </InlineStack>
+                    </Box>
+                ) : (
+                    <InlineStack gap="400" wrap={true} align="stretch">
+                        {plans.map((plan) => (
+                            <Box key={plan.id} minWidth="300px" style={{ flex: "1" }}>
+                                {renderPlanCard(plan)}
+                            </Box>
+                        ))}
+                    </InlineStack>
+                )}
             </Box>
 
             {/* Additional Information */}

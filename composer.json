@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "kyon147/laravel-shopify": ">=21.0"
+        "kyon147/laravel-shopify": ">=24.0"
     },
 
     "require-dev": {

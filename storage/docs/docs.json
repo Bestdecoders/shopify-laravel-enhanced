@@ -34,5 +34,14 @@
     "order": 4,
     "file": "troubleshooting.md",
     "published": true
+  },
+  {
+    "id": "webhook-implementation",
+    "title": "GDPR Webhook Implementation",
+    "description": "Implementation guide for mandatory GDPR compliance webhooks",
+    "category": "Advanced",
+    "order": 5,
+    "file": "webhook-implementation.md",
+    "published": true
   }
 ]

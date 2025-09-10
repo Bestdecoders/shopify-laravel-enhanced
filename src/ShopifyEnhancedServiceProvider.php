@@ -31,65 +31,96 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         //         RunAfterInstallJob::class
         //     );
         // }
-        // Publish Config File
-        $this->publishes([
-            __DIR__ . '/../config/shopify-enhanced.php' => config_path('shopify-enhanced.php'),
-        ], 'shopify-enhanced-config');
-
-
-        $this->publishes([
-            // Views
-            __DIR__ . '/../resources/views/emails' => resource_path('views/emails'),
-            __DIR__ . '/../resources/views/app.blade.php' => resource_path('views/app.blade.php'),
-
-            // JS
-            __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
-            __DIR__ . '/../resources/js/components' => resource_path('js/components'),
-            __DIR__ . '/../resources/js/pages' => resource_path('js/pages'),
-            __DIR__ . '/../resources/js/Pages' => resource_path('js/Pages'),
-            __DIR__ . '/../resources/js/app.jsx' => resource_path('js/app.jsx'),
-
-            // CSS
-            __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
-            __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
-            __DIR__ . '/../resources/css/documentation.css' => resource_path('css/documentation.css'),
-        ], 'shopify-enhanced-assets');
-
-
-
-
-        // Publish Custom Uninstall Job
+        // === DEFAULT PUBLISHING (Essential components only) ===
+        
+        // Publish Jobs (Install/Uninstall) with dependencies
         $this->publishes([
             __DIR__ . '/Jobs/AppUninstalledJob.php' => app_path('Jobs/AppUninstalledJob.php'),
-        ], 'shopify-enhanced-jobs');
+        ], ['default', 'shopify-enhanced-jobs']);
 
+        // Publish Mail classes (required by jobs)
+        $this->publishes([
+            __DIR__ . '/Mail' => app_path('Mail'),
+        ], ['default', 'shopify-enhanced-mail']);
 
+        // Publish Services (required by AfterInstallJob)
+        $this->publishes([
+            __DIR__ . '/Services' => app_path('Services'),
+        ], ['default', 'shopify-enhanced-services']);
 
-        // Publish Middleware 
+        // Publish Config (required by jobs and services)
+        $this->publishes([
+            __DIR__ . '/../config/shopify-enhanced.php' => config_path('shopify-enhanced.php'),
+        ], ['default', 'shopify-enhanced-config']);
 
+        // Publish Email Templates (required by Mail classes)
+        $this->publishes([
+            __DIR__ . '/../resources/views/emails' => resource_path('views/emails'),
+        ], ['default', 'shopify-enhanced-emails']);
+
+        // Publish Grandfather Access Commands
+        $this->publishes([
+            __DIR__ . '/Console/Commands/GrantGrandfatherAccessCommand.php' =>
+                app_path('Console/Commands/GrantGrandfatherAccessCommand.php'),
+            __DIR__ . '/Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php' =>
+                app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
+        ], ['default', 'shopify-enhanced-commands']);
+
+        // === OPTIONAL FEATURE PUBLISHING ===
+
+        // Publish Core Components (shared frontend assets)
+        $this->publishes([
+            __DIR__ . '/../resources/js/components' => resource_path('js/components'),
+            __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
+            __DIR__ . '/../resources/js/app.jsx' => resource_path('js/app.jsx'),
+            __DIR__ . '/../resources/views/app.blade.php' => resource_path('views/app.blade.php'),
+            __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
+            __DIR__ . '/../package.json' => base_path('package-enhanced.json'),
+        ], 'shopify-enhanced-core');
+
+        // Publish FAQ Page
+        $this->publishes([
+            __DIR__ . '/../resources/js/Pages/Faq.jsx' => resource_path('js/Pages/Faq.jsx'),
+            __DIR__ . '/../storage/faq.json' => storage_path('app/faq.json'),
+        ], 'shopify-enhanced-faq');
+
+        // Publish Documentation Page
+        $this->publishes([
+            __DIR__ . '/../resources/js/Pages/Documentation.jsx' => resource_path('js/Pages/Documentation.jsx'),
+            __DIR__ . '/../resources/css/documentation.css' => resource_path('css/documentation.css'),
+            __DIR__ . '/../storage/docs' => storage_path('app/docs'),
+        ], 'shopify-enhanced-docs');
+
+        // Publish Pricing Page
+        $this->publishes([
+            __DIR__ . '/../resources/js/Pages/Pricing.jsx' => resource_path('js/Pages/Pricing.jsx'),
+            __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
+        ], 'shopify-enhanced-pricing');
+
+        // Publish Middleware
         $this->publishes([
             __DIR__ . '/Middleware' => app_path('Http/Middleware'),
         ], 'shopify-enhanced-middleware');
 
+        // Publish Webhook Handler (for user customization)
         $this->publishes([
-            // Grant command
-            __DIR__ . '/Console/Commands/GrantGrandfatherAccessCommand.php' =>
-                app_path('Console/Commands/GrantGrandfatherAccessCommand.php'),
-        
-            // Revoke command
-            __DIR__ . '/Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php' =>
-                app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
-        ], 'shopify-enhanced-commands');
+            __DIR__ . '/Stubs/CustomWebhookHandler.php' => app_path('Services/CustomWebhookHandler.php'),
+        ], 'shopify-enhanced-webhooks');
 
-        // Publish FAQ Data
+        // Publish Bestdecoders Home Page
         $this->publishes([
-            __DIR__ . '/../storage/faq.json' => storage_path('app/faq.json'),
-        ], 'shopify-enhanced-faq');
+            __DIR__ . '/../resources/views/home.blade.php' => resource_path('views/home.blade.php'),
+        ], 'shopify-enhanced-home');
 
-        // Publish Documentation
+        // Publish Bestdecoders Privacy Policy
         $this->publishes([
-            __DIR__ . '/../storage/docs' => storage_path('app/docs'),
-        ], 'shopify-enhanced-docs');
+            __DIR__ . '/../resources/views/privacy.blade.php' => resource_path('views/privacy.blade.php'),
+        ], 'shopify-enhanced-privacy');
+
+        // Publish Exception Handler (with Shopify exception handling)
+        $this->publishes([
+            __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
+        ], ['default', 'shopify-enhanced-exceptions']);
         
     }
 

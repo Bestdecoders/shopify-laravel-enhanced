@@ -1,0 +1,706 @@
+{
+  "info": {
+    "name": "UserSubscriptionController Testing",
+    "description": "Complete API testing collection for UserSubscriptionController with Shopify integration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "test_user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "test_user_id_2",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "test_user_id_3",
+      "value": "3",
+      "type": "string"
+    },
+    {
+      "key": "test_charge_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup & Debug",
+      "item": [
+        {
+          "name": "Debug Configuration",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/debug",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "debug"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Test Coupons",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/create-test-coupons",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "create-test-coupons"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test GraphQL Connection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{test_user_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/test-graphql",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "test-graphql"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Data Inspection",
+      "item": [
+        {
+          "name": "Get User Charges",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/user/{{test_user_id}}/charges",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "user", "{{test_user_id}}", "charges"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/user/{{test_user_id}}/active",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "user", "{{test_user_id}}", "active"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sync Charge Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/charge/{{test_charge_id}}/sync",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "charge", "{{test_charge_id}}", "sync"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Production API Tests",
+      "item": [
+        {
+          "name": "Get Subscription Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subscription Details - User 2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_2}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_2}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Subscription Details - User 3",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_3}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_3}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscription Management",
+      "item": [
+        {
+          "name": "Create Test Subscription - Monthly",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{test_user_id}},\n  \"plan_type\": \"monthly\",\n  \"trial_days\": 14\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/create",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Test Subscription - Yearly with Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{test_user_id_2}},\n  \"plan_type\": \"yearly\",\n  \"trial_days\": 30,\n  \"coupon_code\": \"WELCOME10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/create",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Test Subscription - Lifetime",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{test_user_id_3}},\n  \"plan_type\": \"lifetime\",\n  \"trial_days\": 7,\n  \"coupon_code\": \"SAVE25\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/create",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "create"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscription Operations",
+      "item": [
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Testing cancellation flow\",\n  \"immediate\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "cancel"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Subscription - Immediate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Immediate cancellation test\",\n  \"immediate\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_2}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_2}}", "cancel"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reactivate Subscription",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_2}}/reactivate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_2}}", "reactivate"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Free Time Management",
+      "item": [
+        {
+          "name": "Extend Free Time - 7 days",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days\": 7,\n  \"reason\": \"Customer service gesture\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/extend-free-time",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "extend-free-time"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extend Free Time - 30 days",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days\": 30,\n  \"reason\": \"Welcome bonus\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_3}}/extend-free-time",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_3}}", "extend-free-time"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Coupon Management",
+      "item": [
+        {
+          "name": "Apply Percentage Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"WELCOME10\",\n  \"plan_type\": \"monthly\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Fixed Amount Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"SAVE25\",\n  \"plan_type\": \"yearly\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_2}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_2}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Free Days Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"FREETRIAL\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_3}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_3}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "Get Non-existent User Subscription",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/99999",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "99999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Already Cancelled Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Already cancelled test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id_2}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id_2}}", "cancel"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Invalid Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"INVALID_CODE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Expired Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"BLACKFRIDAY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extend Free Time - Invalid Days",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days\": 500,\n  \"reason\": \"Too many days test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/extend-free-time",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "extend-free-time"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reactivate Non-cancelled Subscription",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/reactivate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "reactivate"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Validation Testing",
+      "item": [
+        {
+          "name": "Cancel Subscription - Missing Reason",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "cancel"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extend Free Time - Missing Days",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"No days specified\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/extend-free-time",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "extend-free-time"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Coupon - Missing Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan_type\": \"monthly\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/subscriptions/{{test_user_id}}/apply-coupon",
+              "host": ["{{base_url}}"],
+              "path": ["api", "subscriptions", "{{test_user_id}}", "apply-coupon"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Subscription - Invalid Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{test_user_id}},\n  \"plan_type\": \"invalid_plan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/test/subscriptions/create",
+              "host": ["{{base_url}}"],
+              "path": ["test", "subscriptions", "create"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set common headers",
+          "pm.request.headers.add({",
+          "    key: 'Accept',",
+          "    value: 'application/json'",
+          "});",
+          "",
+          "// Log the request for debugging",
+          "console.log('Making request to:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Common tests for all requests",
+          "pm.test('Response time is acceptable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "pm.test('Response has proper Content-Type', function () {",
+          "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "});",
+          "",
+          "// Log response for debugging",
+          "if (pm.response.code >= 400) {",
+          "    console.log('Error response:', pm.response.text());",
+          "}",
+          "",
+          "// Additional tests based on response code",
+          "if (pm.response.code === 200) {",
+          "    pm.test('Successful response has valid JSON', function () {",
+          "        pm.response.to.have.jsonBody();",
+          "    });",
+          "}",
+          "",
+          "if (pm.response.code === 422) {",
+          "    pm.test('Validation error contains errors field', function () {",
+          "        pm.expect(pm.response.json()).to.have.property('errors');",
+          "    });",
+          "}",
+          "",
+          "if (pm.response.code === 404) {",
+          "    pm.test('Not found error contains message', function () {",
+          "        pm.expect(pm.response.json()).to.have.property('message');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}
