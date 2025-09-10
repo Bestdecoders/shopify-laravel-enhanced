@@ -74,6 +74,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
             __DIR__ . '/../resources/js/app.jsx' => resource_path('js/app.jsx'),
             __DIR__ . '/../resources/views/app.blade.php' => resource_path('views/app.blade.php'),
+            __DIR__ . '/../resources/views/home.blade.php' => resource_path('views/home.blade.php'),
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             __DIR__ . '/../package.json' => base_path('package-enhanced.json'),
         ], 'shopify-enhanced-core');
@@ -91,9 +92,23 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../storage/docs' => storage_path('app/docs'),
         ], 'shopify-enhanced-docs');
 
-        // Publish Pricing Page
+        // Publish Pricing Page and Related Components
         $this->publishes([
+            // Pricing Page
             __DIR__ . '/../resources/js/Pages/Pricing.jsx' => resource_path('js/Pages/Pricing.jsx'),
+            
+            // Pricing Components
+            __DIR__ . '/../resources/js/components/Pricing.jsx' => resource_path('js/components/Pricing.jsx'),
+            __DIR__ . '/../resources/js/components/TableEditor.jsx' => resource_path('js/components/TableEditor.jsx'),
+            __DIR__ . '/../resources/js/components/EditableInput.jsx' => resource_path('js/components/EditableInput.jsx'),
+            
+            // Pricing Controller
+            __DIR__ . '/Http/Controllers/PricingController.php' => app_path('Http/Controllers/PricingController.php'),
+            
+            // Billing Configuration
+            __DIR__ . '/../config/billing.php' => config_path('billing.php'),
+            
+            // Pricing Styles
             __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
         ], 'shopify-enhanced-pricing');
 
@@ -121,6 +136,11 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
         ], ['default', 'shopify-enhanced-exceptions']);
+
+        // Publish Sidebar Component (individual publishing)
+        $this->publishes([
+            __DIR__ . '/../resources/js/components/sidebar.jsx' => resource_path('js/components/sidebar.jsx'),
+        ], 'shopify-enhanced-sidebar');
         
     }
 
