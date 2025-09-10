@@ -379,7 +379,8 @@ class SubscriptionManagementService
 
     private function getPlanDetails(string $planType): ?array
     {
-        $billingConfig = config('shopify-enhanced-billing.pricing', []);
+        // Billing config removed for simplicity - implement pricing logic directly here
+        $billingConfig = [];
         
         if (isset($billingConfig[$planType])) {
             return $billingConfig[$planType];

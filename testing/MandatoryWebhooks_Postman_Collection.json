@@ -1,0 +1,320 @@
+{
+  "info": {
+    "name": "Shopify Mandatory Webhooks Testing",
+    "description": "Complete testing collection for Shopify mandatory GDPR webhooks (customers/data_request, customers/redact, shop/redact)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string",
+      "description": "Your app's base URL"
+    },
+    {
+      "key": "webhook_secret",
+      "value": "your_webhook_secret_here",
+      "type": "string",
+      "description": "Shopify webhook secret for HMAC signature"
+    },
+    {
+      "key": "test_shop_domain",
+      "value": "test-shop.myshopify.com",
+      "type": "string",
+      "description": "Test shop domain"
+    },
+    {
+      "key": "customer_id",
+      "value": "12345678901234567",
+      "type": "string",
+      "description": "Test customer ID"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Generate HMAC signature for webhook validation",
+          "const crypto = require('crypto');",
+          "",
+          "// Get the webhook secret",
+          "const secret = pm.collectionVariables.get('webhook_secret');",
+          "",
+          "if (pm.request.body && pm.request.body.raw && secret) {",
+          "    const body = pm.request.body.raw;",
+          "    ",
+          "    // Calculate HMAC",
+          "    const hmac = crypto.createHmac('sha256', secret);",
+          "    hmac.update(body, 'utf8');",
+          "    const hash = hmac.digest('base64');",
+          "    ",
+          "    // Set the header",
+          "    pm.request.headers.add({",
+          "        key: 'X-Shopify-Hmac-Sha256',",
+          "        value: hash",
+          "    });",
+          "    ",
+          "    console.log('Generated HMAC:', hash);",
+          "} else {",
+          "    console.log('Warning: No webhook secret or body found - HMAC not generated');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "GDPR - Customer Data Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has success status', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.status).to.eql('success');",
+              "});",
+              "",
+              "pm.test('Response contains message', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('message');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "value": "customers/data_request"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "value": "{{test_shop_domain}}"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "value": "2023-10"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": 12345678,\n  \"shop_domain\": \"{{test_shop_domain}}\",\n  \"orders_requested\": [\n    123456789\n  ],\n  \"customer\": {\n    \"id\": {{customer_id}},\n    \"email\": \"customer@example.com\",\n    \"phone\": \"+1234567890\"\n  },\n  \"data_request\": {\n    \"id\": 987654321\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/webhooks/customers/data_request",
+          "host": ["{{base_url}}"],
+          "path": ["webhooks", "customers", "data_request"]
+        },
+        "description": "Test the mandatory GDPR customer data request webhook"
+      },
+      "response": []
+    },
+    {
+      "name": "GDPR - Customer Data Erasure",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has success status', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.status).to.eql('success');",
+              "});",
+              "",
+              "pm.test('Response contains message', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('message');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "value": "customers/redact"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "value": "{{test_shop_domain}}"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "value": "2023-10"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": 12345678,\n  \"shop_domain\": \"{{test_shop_domain}}\",\n  \"customer\": {\n    \"id\": {{customer_id}},\n    \"email\": \"customer@example.com\",\n    \"phone\": \"+1234567890\"\n  },\n  \"orders_to_redact\": [\n    123456789,\n    987654321\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/webhooks/customers/redact",
+          "host": ["{{base_url}}"],
+          "path": ["webhooks", "customers", "redact"]
+        },
+        "description": "Test the mandatory GDPR customer data erasure webhook"
+      },
+      "response": []
+    },
+    {
+      "name": "GDPR - Shop Data Erasure",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has success status', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.status).to.eql('success');",
+              "});",
+              "",
+              "pm.test('Response contains message', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('message');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "value": "shop/redact"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "value": "{{test_shop_domain}}"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "value": "2023-10"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": 12345678,\n  \"shop_domain\": \"{{test_shop_domain}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/webhooks/shop/redact",
+          "host": ["{{base_url}}"],
+          "path": ["webhooks", "shop", "redact"]
+        },
+        "description": "Test the mandatory GDPR shop data erasure webhook"
+      },
+      "response": []
+    },
+    {
+      "name": "Test Invalid HMAC (Should Fail)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Override the collection pre-request script to set invalid HMAC",
+              "pm.request.headers.add({",
+              "    key: 'X-Shopify-Hmac-Sha256',",
+              "    value: 'invalid_hmac_signature'",
+              "});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response status should be 401 or 403 for invalid HMAC', function () {",
+              "    pm.expect([401, 403]).to.include(pm.response.code);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "value": "customers/data_request"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "value": "{{test_shop_domain}}"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "value": "2023-10"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shop_id\": 12345678,\n  \"shop_domain\": \"{{test_shop_domain}}\",\n  \"customer\": {\n    \"id\": {{customer_id}},\n    \"email\": \"customer@example.com\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/webhooks/customers/data_request",
+          "host": ["{{base_url}}"],
+          "path": ["webhooks", "customers", "data_request"]
+        },
+        "description": "Test webhook with invalid HMAC signature to ensure validation is working"
+      },
+      "response": []
+    }
+  ]
+}

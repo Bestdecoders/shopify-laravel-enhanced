@@ -16,7 +16,8 @@ class Billable
             return $next($request);
         }
 
-        if (!Util::useNativeAppBridge() && !$request->ajax()) {
+        // Skip billing check for non-AJAX requests (removed deprecated useNativeAppBridge check)
+        if (!$request->ajax()) {
             return $next($request);
         }
 

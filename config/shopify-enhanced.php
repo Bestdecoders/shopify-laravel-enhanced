@@ -24,29 +24,6 @@ return [
     |
     */
     'graphql_queries_config' => 'shopify-enhanced-graphql-queries',
-    'billing_config' => 'shopify-enhanced-billing', 
-    'features_config' => 'shopify-enhanced-features',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Helper Methods for Config Access
-    |--------------------------------------------------------------------------
-    |
-    | These methods provide easy access to configurations from other files
-    |
-    */
-    'get_graphql_query' => function($category, $key) {
-        $queries = config('shopify-enhanced-graphql-queries');
-        return $queries[$category][$key] ?? null;
-    },
-
-    'get_billing_config' => function($key) {
-        return config("shopify-enhanced-billing.{$key}");
-    },
-
-    'is_feature_enabled' => function($feature) {
-        return config("shopify-enhanced-features.enabled.{$feature}", false);
-    },
 
     // ===========================================
     // WEBHOOK CONFIGURATION
@@ -76,12 +53,6 @@ return [
             'shop/redact'
         ],
         
-        // Optional business webhooks (can be enabled/disabled)
-        'optional_webhooks' => [
-            'orders/create' => env('WEBHOOK_ORDERS_CREATE', false),
-            'products/update' => env('WEBHOOK_PRODUCTS_UPDATE', false),
-            'custom/events' => env('WEBHOOK_CUSTOM_EVENTS', false),
-        ],
         
         // Webhook URLs (automatically generated, but can be overridden)
         'base_url' => env('APP_URL', 'https://your-app.com'),

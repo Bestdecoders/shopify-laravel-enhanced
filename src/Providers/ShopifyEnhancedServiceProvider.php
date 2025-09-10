@@ -47,15 +47,6 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             'shopify-enhanced-graphql-queries'
         );
 
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/billing.php',
-            'shopify-enhanced-billing'
-        );
-
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/features.php',
-            'shopify-enhanced-features'
-        );
     }
 
     /**
@@ -73,22 +64,10 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/graphql-queries.php' => config_path('shopify-enhanced-graphql-queries.php'),
         ], ['config', 'shopify-enhanced-graphql-config']);
 
-        // Billing config
-        $this->publishes([
-            __DIR__ . '/../../config/billing.php' => config_path('shopify-enhanced-billing.php'),
-        ], ['config', 'shopify-enhanced-billing-config']);
-
-        // Features config
-        $this->publishes([
-            __DIR__ . '/../../config/features.php' => config_path('shopify-enhanced-features.php'),
-        ], ['config', 'shopify-enhanced-features-config']);
-
         // Publish all configs at once
         $this->publishes([
             __DIR__ . '/../../config/shopify-enhanced.php' => config_path('shopify-enhanced.php'),
             __DIR__ . '/../../config/graphql-queries.php' => config_path('shopify-enhanced-graphql-queries.php'),
-            __DIR__ . '/../../config/billing.php' => config_path('shopify-enhanced-billing.php'),
-            __DIR__ . '/../../config/features.php' => config_path('shopify-enhanced-features.php'),
         ], ['config', 'shopify-enhanced-all-configs']);
     }
 

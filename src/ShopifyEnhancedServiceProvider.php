@@ -75,6 +75,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/js/app.jsx' => resource_path('js/app.jsx'),
             __DIR__ . '/../resources/views/app.blade.php' => resource_path('views/app.blade.php'),
             __DIR__ . '/../resources/views/home.blade.php' => resource_path('views/home.blade.php'),
+            __DIR__ . '/../resources/views/emails' => resource_path('views/emails'),
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             __DIR__ . '/../package.json' => base_path('package-enhanced.json'),
         ], 'shopify-enhanced-core');
@@ -101,9 +102,6 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/js/components/Pricing.jsx' => resource_path('js/components/Pricing.jsx'),
             __DIR__ . '/../resources/js/components/TableEditor.jsx' => resource_path('js/components/TableEditor.jsx'),
             __DIR__ . '/../resources/js/components/EditableInput.jsx' => resource_path('js/components/EditableInput.jsx'),
-            
-            // Pricing Controller
-            __DIR__ . '/Http/Controllers/PricingController.php' => app_path('Http/Controllers/PricingController.php'),
             
             // Billing Configuration
             __DIR__ . '/../config/billing.php' => config_path('billing.php'),
