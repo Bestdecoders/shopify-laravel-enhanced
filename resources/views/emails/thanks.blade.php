@@ -8,7 +8,8 @@ Thank you for installing our Shopify app! We're thrilled to have you on board an
 @component('mail::panel')
 **Your App Installation Details:**  
 Shop: {{ $shop['name'] ?? 'N/A' }}  
-Domain: {{ $shop['domain'] ?? $shop['myshopify_domain'] ?? 'N/A' }}  
+Email: {{ $shop['email'] ?? $shop['contactEmail'] ?? 'N/A' }}  
+Plan: {{ $shop['plan']['displayName'] ?? 'N/A' }}  
 Installation Date: {{ now()->format('F j, Y \a\t g:i A T') }}
 @endcomponent
 
@@ -25,7 +26,7 @@ Discover all the powerful tools available to boost your sales.
 **3. Get Support** 💬  
 Our team is here to help you succeed every step of the way.
 
-@component('mail::button', ['url' => "https://{$shop['myshopify_domain']}/admin/apps"])
+@component('mail::button', ['url' => '#'])
 Open App Dashboard
 @endcomponent
 

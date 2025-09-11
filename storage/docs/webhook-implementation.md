@@ -203,13 +203,37 @@ All webhooks return a consistent success response:
 
 ## Extending Webhook Handlers
 
-### Publishing Custom Handler Template
+### Using Custom Webhook Handler
 
-```bash
-php artisan vendor:publish --tag=shopify-enhanced-webhook-handler
+**Step 1:** Create your custom webhook handler:
+
+```php
+<?php
+// app/Services/CustomWebhookHandler.php
+
+namespace App\Services;
+
+use Bestdecoders\ShopifyLaravelEnhanced\Services\WebhookHandlerService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\User;
+
+class CustomWebhookHandler extends WebhookHandlerService
+{
+    // Override methods as needed
+}
 ```
 
-This creates `app/Services/CustomWebhookHandler.php`.
+**Step 2:** Update your `config/shopify-enhanced.php`:
+
+```php
+'webhooks' => [
+    'webhook_secret' => env('SHOPIFY_WEBHOOK_SECRET'),
+    'handler_service' => \App\Services\CustomWebhookHandler::class,
+    'base_url' => env('APP_URL'), // Automatically uses your APP_URL
+    // ... other config options
+],
+```
 
 ### Basic Extension Example
 
@@ -271,23 +295,14 @@ class CustomWebhookHandler extends WebhookHandlerService
 }
 ```
 
-### Registering Custom Handler
+### Configuration Complete
 
-Bind your custom handler in `AppServiceProvider`:
+That's it! Your custom webhook handler is now active. The package will automatically:
+- Use your custom handler for all GDPR webhooks
+- Generate webhook URLs using your `APP_URL`
+- Validate webhooks using your `SHOPIFY_WEBHOOK_SECRET`
 
-```php
-<?php
-// app/Providers/AppServiceProvider.php
-
-use App\Services\CustomWebhookHandler;
-use Bestdecoders\ShopifyLaravelEnhanced\Services\WebhookHandlerService;
-
-public function register()
-{
-    // Bind custom webhook handler
-    $this->app->bind(WebhookHandlerService::class, CustomWebhookHandler::class);
-}
-```
+No additional service provider binding needed when using the config approach.
 
 ## Customization Examples
 
