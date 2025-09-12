@@ -66,10 +66,15 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
                 app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
         ], ['default', 'shopify-enhanced-commands']);
 
+        // Publish Enhanced Exception Handler (with Shopify exception handling built-in)
+        $this->publishes([
+            __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
+        ], ['default', 'shopify-enhanced-exceptions']);
+
 
         // === OPTIONAL FEATURE PUBLISHING ===
 
-        // Publish Core Components (shared frontend assets)
+        // Publish Core Components (shared frontend assets + exception handler)
         $this->publishes([
             __DIR__ . '/../resources/js/components' => resource_path('js/components'),
             __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
@@ -78,6 +83,8 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views/home.blade.php' => resource_path('views/home.blade.php'),
             __DIR__ . '/../resources/views/emails' => resource_path('views/emails'),
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
+            // Enhanced Exception Handler (critical for preventing auth errors)
+            __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
         ], 'shopify-enhanced-core');
 
         // Publish FAQ Page

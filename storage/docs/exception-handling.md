@@ -1,6 +1,6 @@
 # 🛡️ Exception Handling Setup Guide
 
-> **Critical Setup Required!** This package provides smart exception handling for Shopify authentication issues, but requires manual integration into your Laravel exception handler to prevent the "No authenticated user or shop domain" error.
+> **Automatic Setup Available!** This package provides smart exception handling for Shopify authentication issues. Choose between automatic replacement or manual integration to prevent the "No authenticated user or shop domain" error.
 
 ## 🚨 The Problem
 
@@ -11,9 +11,27 @@ When users access your Shopify app's `/install` route directly (without proper S
 - **Log file bloat** from repeated authentication exceptions
 - **Poor user experience** with technical error messages
 
-## ✅ The Solution: HandlesShopifyExceptions Trait
+## ✅ The Solutions
 
-Our package includes a smart trait that automatically handles these authentication issues with proper user-friendly responses.
+### Option 1: Automatic Handler Replacement (Recommended)
+
+The easiest way is to let the package replace your Handler.php with an enhanced version that includes Shopify exception handling built-in:
+
+```bash
+# This replaces your app/Exceptions/Handler.php with enhanced version
+php artisan vendor:publish --tag=shopify-enhanced-exceptions
+```
+
+**What you get:**
+- ✅ **Complete Handler.php** with Shopify exception handling built-in
+- ✅ **Zero configuration** - works immediately
+- ✅ **Clear comments** explaining what each part does
+- ✅ **Extensible** - marked places for your custom logic
+- ✅ **Professional code** with proper documentation
+
+### Option 2: Manual Integration (If you have custom Handler logic)
+
+If you have existing custom exception handling that you want to preserve:
 
 ## 📋 Manual Integration Steps
 
