@@ -1,7 +1,7 @@
 @component('mail::message')
 # Welcome to {{ config('app.name') }}! 🎉
 
-Hello {{ $shop['name'] ?? 'there' }},
+Hello {{ $shop['name'] ?? $shop['contactEmail'] ?? 'there' }},
 
 Thank you for installing our Shopify app! We're thrilled to have you on board and excited to help your business grow to new heights.
 
@@ -10,6 +10,7 @@ Thank you for installing our Shopify app! We're thrilled to have you on board an
 Shop: {{ $shop['name'] ?? 'N/A' }}  
 Email: {{ $shop['email'] ?? $shop['contactEmail'] ?? 'N/A' }}  
 Plan: {{ $shop['plan']['displayName'] ?? 'N/A' }}  
+Currency: {{ $shop['currencyCode'] ?? 'N/A' }}  
 Installation Date: {{ now()->format('F j, Y \a\t g:i A T') }}
 @endcomponent
 

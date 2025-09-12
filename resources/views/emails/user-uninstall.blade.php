@@ -19,12 +19,17 @@ Your experience matters to us! If you experienced any issues or have suggestions
 Share Your Feedback
 @endcomponent
 
-## What Our Merchants Love About Us ❤️
+## Help Us Improve - What Could We Have Done Better? 🤔
 
-- ⚡ **Easy Setup** - Quick installation and configuration
-- 🎯 **Excellent Support** - Responsive customer service team  
-- 🚀 **Regular Updates** - New features added monthly
-- 💰 **Great Value** - Competitive pricing with powerful features
+We're constantly working to enhance our app based on merchant feedback. Common areas where we've made improvements include:
+
+- 📱 **Easier Navigation** - Was our interface confusing or hard to use?
+- ⚡ **Faster Performance** - Did the app slow down your store or admin?
+- 📚 **Better Documentation** - Were setup instructions unclear or missing?
+- 🛠️ **Missing Features** - What functionality did you need that we didn't have?
+- 💬 **Support Experience** - Could our response time or help quality be better?
+
+Your honest feedback helps us build a better experience for all merchants.
 
 ## Come Back Anytime 🤝
 
