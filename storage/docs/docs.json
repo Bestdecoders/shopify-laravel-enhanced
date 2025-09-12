@@ -1,47 +1,179 @@
 [
   {
+    "id": "quick-reference",
+    "title": "Quick Reference",
+    "description": "Essential commands, configurations, and code snippets",
+    "category": "Essentials",
+    "order": 1,
+    "file": "quick-reference.md",
+    "published": true,
+    "icon": "⚡",
+    "tags": ["quick-start", "commands", "reference"]
+  },
+  {
+    "id": "installation", 
+    "title": "Installation Guide",
+    "description": "Complete package installation and setup instructions",
+    "category": "Essentials",
+    "order": 2,
+    "file": "installation.md",
+    "published": true,
+    "icon": "📦",
+    "tags": ["setup", "composer", "publishing"]
+  },
+  {
+    "id": "exception-handling",
+    "title": "Exception Handling Setup",
+    "description": "Critical setup for handling Shopify authentication errors",
+    "category": "Essentials", 
+    "order": 3,
+    "file": "exception-handling.md",
+    "published": true,
+    "icon": "🛡️",
+    "tags": ["critical", "errors", "authentication", "trait"],
+    "priority": "high"
+  },
+  {
     "id": "getting-started",
     "title": "Getting Started",
-    "description": "Quick start guide to set up your first size charts",
-    "category": "Basics",
-    "order": 1,
+    "description": "Quick start guide with essential setup steps",
+    "category": "Essentials",
+    "order": 4,
     "file": "getting-started.md",
-    "published": true
+    "published": true,
+    "icon": "🚀",
+    "tags": ["basics", "quick-start", "tutorial"]
+  },
+  {
+    "id": "configuration",
+    "title": "Configuration Guide", 
+    "description": "Complete configuration reference and customization options",
+    "category": "Setup",
+    "order": 5,
+    "file": "configuration.md",
+    "published": true,
+    "icon": "⚙️",
+    "tags": ["config", "environment", "customization"]
+  },
+  {
+    "id": "webhook-implementation",
+    "title": "Webhook Implementation",
+    "description": "GDPR compliance webhooks and custom webhook handlers",
+    "category": "Advanced",
+    "order": 6,
+    "file": "webhook-implementation.md",
+    "published": true,
+    "icon": "📡",
+    "tags": ["webhooks", "gdpr", "compliance"]
+  },
+  {
+    "id": "webhook-testing",
+    "title": "Webhook Testing Guide",
+    "description": "Testing and debugging webhook implementations",
+    "category": "Advanced",
+    "order": 7,
+    "file": "WEBHOOK_TESTING_GUIDE.md",
+    "published": true,
+    "icon": "🧪",
+    "tags": ["testing", "debugging", "webhooks"]
+  },
+  {
+    "id": "webhook-basics",
+    "title": "Webhook Basics",
+    "description": "Understanding Shopify webhooks and basic implementation",
+    "category": "Advanced", 
+    "order": 8,
+    "file": "webhook.md",
+    "published": true,
+    "icon": "🔗",
+    "tags": ["webhooks", "basics", "shopify"]
   },
   {
     "id": "size-chart-creation",
-    "title": "Size Chart Creation Guide",
-    "description": "Detailed guide on creating effective size charts",
-    "category": "Setup",
-    "order": 2,
+    "title": "Size Chart Creation",
+    "description": "Detailed guide for creating effective size charts",
+    "category": "Features",
+    "order": 9,
     "file": "size-chart-creation.md",
-    "published": true
+    "published": true,
+    "icon": "📊",
+    "tags": ["size-charts", "creation", "guide"]
   },
   {
     "id": "display-customization",
     "title": "Display Customization",
-    "description": "Customize appearance and behavior of your size charts",
-    "category": "Customization",
-    "order": 3,
-    "file": "display-customization.md",
-    "published": true
+    "description": "Customize the appearance and behavior of your features",
+    "category": "Features",
+    "order": 10,
+    "file": "display-customization.md", 
+    "published": true,
+    "icon": "🎨",
+    "tags": ["customization", "styling", "display"]
   },
   {
     "id": "troubleshooting",
     "title": "Troubleshooting Guide",
-    "description": "Common issues and solutions",
+    "description": "Common issues, solutions, and debugging tips",
     "category": "Support",
-    "order": 4,
+    "order": 11,
     "file": "troubleshooting.md",
-    "published": true
+    "published": true,
+    "icon": "🔧",
+    "tags": ["troubleshooting", "issues", "debugging", "support"]
   },
   {
-    "id": "webhook-implementation",
-    "title": "GDPR Webhook Implementation",
-    "description": "Implementation guide for mandatory GDPR compliance webhooks",
+    "id": "testing-subscriptions",
+    "title": "Subscription Testing Guide",
+    "description": "Comprehensive testing guide for subscription features and billing",
+    "category": "Testing",
+    "order": 12,
+    "file": "testing-subscriptions.md",
+    "published": true,
+    "icon": "💳",
+    "tags": ["testing", "subscriptions", "billing", "charges"]
+  },
+  {
+    "id": "testing",
+    "title": "Testing Guide", 
+    "description": "General testing instructions and test setup",
+    "category": "Testing",
+    "order": 13,
+    "file": "testing.md",
+    "published": true,
+    "icon": "🧪",
+    "tags": ["testing", "phpunit", "setup"]
+  },
+  {
+    "id": "configuration-system",
+    "title": "Configuration System", 
+    "description": "Advanced configuration system and modular setup",
     "category": "Advanced",
-    "order": 5,
-    "file": "webhook-implementation.md",
-    "published": true
+    "order": 14,
+    "file": "configuration-system.md",
+    "published": true,
+    "icon": "🔧",
+    "tags": ["configuration", "advanced", "modular", "system"]
+  },
+  {
+    "id": "readme-exception-handling",
+    "title": "Exception Handling README",
+    "description": "Original exception handling documentation and options",
+    "category": "Reference",
+    "order": 15,
+    "file": "readme-exception-handling.md",
+    "published": false,
+    "icon": "📄",
+    "tags": ["reference", "exception-handling", "readme"]
+  },
+  {
+    "id": "homepage",
+    "title": "Homepage Documentation",
+    "description": "Homepage and landing page documentation",
+    "category": "Reference", 
+    "order": 16,
+    "file": "homepage.md",
+    "published": false,
+    "icon": "🏠",
+    "tags": ["homepage", "landing", "reference"]
   }
 ]

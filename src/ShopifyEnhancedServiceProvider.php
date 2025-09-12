@@ -66,6 +66,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
                 app_path('Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php'),
         ], ['default', 'shopify-enhanced-commands']);
 
+
         // === OPTIONAL FEATURE PUBLISHING ===
 
         // Publish Core Components (shared frontend assets)
@@ -129,10 +130,6 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views/privacy.blade.php' => resource_path('views/privacy.blade.php'),
         ], 'shopify-enhanced-privacy');
 
-        // Publish Exception Handler (with Shopify exception handling)
-        $this->publishes([
-            __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
-        ], ['default', 'shopify-enhanced-exceptions']);
 
         // Publish Sidebar Component (individual publishing)
         $this->publishes([

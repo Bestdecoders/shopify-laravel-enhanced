@@ -29,6 +29,20 @@ trait HandlesShopifyExceptions
     protected function renderShopifyException($request, Throwable $exception)
     {
         if ($exception instanceof MissingShopDomainException) {
+            // If it's already on /install and still missing -> don't redirect, just return 400
+            if ($request->is('install')) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'error' => 'Missing or invalid shop domain',
+                        'message' => 'Please access this app through the Shopify admin panel.',
+                        'redirect_url' => 'https://apps.shopify.com'
+                    ], 400);
+                }
+                
+                return response('Missing or invalid shop domain. Please access this app through the Shopify admin panel.', 400);
+            }
+
+            // For JSON requests on other routes
             if ($request->expectsJson()) {
                 return response()->json([
                     'error' => 'Shop authentication required',
@@ -37,6 +51,7 @@ trait HandlesShopifyExceptions
                 ], 401);
             }
 
+            // For web requests on other routes, redirect to home
             return redirect('/')->with('error', 'Please authenticate with your Shopify store first.');
         }
 

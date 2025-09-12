@@ -36,6 +36,38 @@ Publish the essential components needed for basic functionality. This includes i
 php artisan vendor:publish --provider="Bestdecoders\ShopifyLaravelEnhanced\ShopifyEnhancedServiceProvider"
 ```
 
+### 2.5. 🛡️ Setup Exception Handling (CRITICAL)
+
+**⚠️ MANDATORY STEP** - This prevents "No authenticated user or shop domain" errors:
+
+Add the trait to your `app/Exceptions/Handler.php`:
+
+```php
+use Bestdecoders\ShopifyLaravelEnhanced\Traits\HandlesShopifyExceptions;
+
+class Handler extends ExceptionHandler
+{
+    use HandlesShopifyExceptions;
+
+    public function register(): void
+    {
+        $this->mergeShopifyDontReport();
+        // ... your existing code
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        $shopifyResponse = $this->renderShopifyException($request, $exception);
+        if ($shopifyResponse !== null) {
+            return $shopifyResponse;
+        }
+        return parent::render($request, $exception);
+    }
+}
+```
+
+📖 **Detailed guide**: [Exception Handling Setup](exception-handling.md)
+
 ### 3. 🎨 Add Frontend Features (Optional)
 
 Choose which frontend features you want to include in your application. Each feature can be published separately, giving you complete control over what gets added to your project. This modular approach keeps your application clean and only includes what you actually need.
