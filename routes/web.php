@@ -20,7 +20,7 @@ Route::middleware('web')->group(function () {
     Route::post('shopify-enhanced/send-thanks-email/{shop}', [ShopifyController::class, 'sendThanksEmail']);
 
     // FAQ Routes
-    Route::prefix('faq')->name('faq.')->middleware('verify.shopify')->group(function () {
+    Route::prefix('faq')->name('faq.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
         Route::get('/', [FaqController::class, 'index'])->name('index');
         Route::get('/search', [FaqController::class, 'search'])->name('search');
         Route::get('/api/faqs', [FaqController::class, 'getFaqs'])->name('api.faqs');
@@ -28,7 +28,7 @@ Route::middleware('web')->group(function () {
     });
 
     // Documentation Routes
-    Route::prefix('docs')->name('docs.')->middleware('verify.shopify')->group(function () {
+    Route::prefix('docs')->name('docs.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
         Route::get('/', [DocumentationController::class, 'index'])->name('index');
         Route::get('/search', [DocumentationController::class, 'search'])->name('search');
         Route::get('/api/{slug}', [DocumentationController::class, 'getDocument'])->name('api.doc');
@@ -36,14 +36,14 @@ Route::middleware('web')->group(function () {
     });
 
     // Pricing Routes
-    Route::prefix('pricing')->name('pricing.')->middleware('verify.shopify')->group(function () {
+    Route::prefix('pricing')->name('pricing.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
         Route::get('/', [PricingController::class, 'index'])->name('index');
         Route::get('/plan/details', [PricingController::class, 'getPlanDetails'])->name('plan.details');
         Route::post('/subscription/url', [PricingController::class, 'getPlanSubscriptionUrl'])->name('subscription.url');
     });
 
     // Subscription Management API Routes
-    Route::prefix('api/subscriptions')->name('api.subscriptions.')->middleware(['verify.shopify'])->group(function () {
+    Route::prefix('api/subscriptions')->name('api.subscriptions.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
         // Get subscription details
         Route::get('/{user}', [UserSubscriptionController::class, 'show'])->name('show');
         

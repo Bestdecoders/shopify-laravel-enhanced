@@ -71,10 +71,15 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
         ], ['default', 'shopify-enhanced-exceptions']);
 
+        // Publish Essential Middleware (ExtractShopName)
+        $this->publishes([
+            __DIR__ . '/Middleware/ExtractShopName.php' => app_path('Http/Middleware/ExtractShopName.php'),
+        ], ['default', 'shopify-enhanced-middleware']);
+
 
         // === OPTIONAL FEATURE PUBLISHING ===
 
-        // Publish Core Components (shared frontend assets + exception handler)
+        // Publish Core Components (shared frontend assets + critical backend)
         $this->publishes([
             __DIR__ . '/../resources/js/components' => resource_path('js/components'),
             __DIR__ . '/../resources/js/hooks' => resource_path('js/hooks'),
@@ -85,6 +90,8 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             // Enhanced Exception Handler (critical for preventing auth errors)
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
+            // Essential Middleware (ExtractShopName for shop context)
+            __DIR__ . '/Middleware/ExtractShopName.php' => app_path('Http/Middleware/ExtractShopName.php'),
         ], 'shopify-enhanced-core');
 
         // Publish FAQ Page
