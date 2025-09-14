@@ -25,11 +25,11 @@ import {
 } from '@shopify/polaris-icons';
 import { useAxios } from '../hooks/useAxios';
 
-const FaqList = ({ initialFaqs = [], categories = [], tags = [] }) => {
+const FaqList = ({ initialFaqs = [], categories = [], tags = [], preSelectedCategory = '', onCategoryChange = () => {} }) => {
     const [faqs, setFaqs] = useState(initialFaqs);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState(preSelectedCategory);
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedPriority, setSelectedPriority] = useState('');
     const [expandedItems, setExpandedItems] = useState(new Set());
@@ -37,6 +37,16 @@ const FaqList = ({ initialFaqs = [], categories = [], tags = [] }) => {
     const [availableTags, setAvailableTags] = useState(tags);
 
     const axios = useAxios();
+
+    // Sync preSelectedCategory with internal state
+    useEffect(() => {
+        setSelectedCategory(preSelectedCategory);
+    }, [preSelectedCategory]);
+
+    // Notify parent component when category changes
+    useEffect(() => {
+        onCategoryChange(selectedCategory);
+    }, [selectedCategory, onCategoryChange]);
 
     // Debounced search effect
     useEffect(() => {
@@ -86,6 +96,7 @@ const FaqList = ({ initialFaqs = [], categories = [], tags = [] }) => {
         setSelectedTags([]);
         setSelectedPriority('');
         setFaqs(initialFaqs);
+        onCategoryChange(''); // Notify parent that category filter was cleared
     };
 
     const handleTagRemove = (tagToRemove) => {
@@ -119,7 +130,10 @@ const FaqList = ({ initialFaqs = [], categories = [], tags = [] }) => {
             filters.push({
                 key: 'category',
                 label: `Category: ${selectedCategory}`,
-                onRemove: () => setSelectedCategory(''),
+                onRemove: () => {
+                    setSelectedCategory('');
+                    onCategoryChange('');
+                },
             });
         }
         if (selectedPriority) {

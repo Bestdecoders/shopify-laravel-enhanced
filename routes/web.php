@@ -9,6 +9,7 @@ use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\WebhookController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\HomeController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\UserSubscriptionController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\TestSubscriptionController;
+use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\SupportController;
 
 Route::middleware('web')->group(function () {
    
@@ -42,22 +43,55 @@ Route::middleware('web')->group(function () {
         Route::post('/subscription/url', [PricingController::class, 'getPlanSubscriptionUrl'])->name('subscription.url');
     });
 
-    // Subscription Management API Routes
-    Route::prefix('api/subscriptions')->name('api.subscriptions.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
-        // Get subscription details
+    // Support Routes
+    Route::prefix('support')->name('support.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
+        Route::get('/', [SupportController::class, 'index'])->name('index');
+        Route::post('/submit/expectation', [SupportController::class, 'submitExpectation'])->name('submit.expectation');
+        Route::get('/replies/{expectationId}', [SupportController::class, 'getReplies'])->name('get.replies');
+    });
+
+    // Admin Support API Routes
+    Route::prefix('admin/api/support')->name('admin.api.support.')->middleware(['auth:sanctum'])->group(function () {
+        Route::get('/expectations', [SupportController::class, 'getAllExpectations'])->name('expectations.index');
+        Route::get('/expectations/{id}', [SupportController::class, 'getExpectation'])->name('expectations.show');
+        Route::post('/expectations/{id}/reply', [SupportController::class, 'replyToExpectation'])->name('expectations.reply');
+    });
+
+    // User-Accessible Subscription Routes (for shop owners)
+    Route::prefix('api/my-subscription')->name('api.my-subscription.')->middleware(['verify.shopify', 'App\Http\Middleware\ExtractShopName'])->group(function () {
+        // User can view their own subscription details
+        Route::get('/', [UserSubscriptionController::class, 'showMySubscription'])->name('show');
+        
+        // User can cancel their own subscription
+        Route::post('/cancel', [UserSubscriptionController::class, 'cancelMySubscription'])->name('cancel');
+        
+        // User can apply coupon codes to their own subscription
+        Route::post('/apply-coupon', [UserSubscriptionController::class, 'applyMyCoupon'])->name('apply-coupon');
+        
+        // User can reactivate their own subscription
+        Route::post('/reactivate', [UserSubscriptionController::class, 'reactivateMySubscription'])->name('reactivate');
+    });
+
+    // Admin-Only Subscription Management API Routes (for shopify-admin-dashboard)
+    Route::prefix('admin/api/subscriptions')->name('admin.api.subscriptions.')->middleware(['auth:sanctum'])->group(function () {
+        // Admin can view any user's subscription details
         Route::get('/{user}', [UserSubscriptionController::class, 'show'])->name('show');
         
-        // Cancel subscription
+        // Admin can cancel any user's subscription
         Route::post('/{user}/cancel', [UserSubscriptionController::class, 'cancel'])->name('cancel');
         
-        // Extend free time
+        // Admin can extend free time for any user
         Route::post('/{user}/extend-free-time', [UserSubscriptionController::class, 'extendFreeTime'])->name('extend-free-time');
         
-        // Apply coupon code
+        // Admin can apply coupon codes for any user
         Route::post('/{user}/apply-coupon', [UserSubscriptionController::class, 'applyCoupon'])->name('apply-coupon');
         
-        // Reactivate subscription
+        // Admin can reactivate any user's subscription
         Route::post('/{user}/reactivate', [UserSubscriptionController::class, 'reactivate'])->name('reactivate');
+        
+        // Admin-only bulk operations
+        Route::post('/bulk/extend-trial', [UserSubscriptionController::class, 'bulkExtendTrial'])->name('bulk.extend-trial');
+        Route::post('/bulk/apply-discount', [UserSubscriptionController::class, 'bulkApplyDiscount'])->name('bulk.apply-discount');
     });
 
     // Testing Routes (only in development)

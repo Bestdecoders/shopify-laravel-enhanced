@@ -27,6 +27,8 @@ composer require bestdecoders/shopify-laravel-enhanced
 
 ### 2. Publish Essential Components
 
+> 📊 **See [Publish Commands Reference](publish-commands-reference.md) for complete chart of all available commands and their files.**
+
 Choose your publishing strategy based on your needs:
 
 #### Option A: Publish All Defaults (Recommended)
@@ -41,6 +43,8 @@ php artisan vendor:publish --provider="Bestdecoders\ShopifyLaravelEnhanced\Shopi
 - Configuration files
 - Email templates
 - Console commands
+- Exception handler
+- Essential middleware
 
 #### Option B: Selective Publishing
 ```bash
@@ -49,6 +53,21 @@ php artisan vendor:publish --tag=shopify-enhanced-core
 
 # Essential backend functionality
 php artisan vendor:publish --tag=default
+```
+
+#### Option C: Feature-Specific Publishing
+```bash
+# Support system
+php artisan vendor:publish --tag=shopify-enhanced-support
+
+# FAQ system
+php artisan vendor:publish --tag=shopify-enhanced-faq
+
+# Documentation system
+php artisan vendor:publish --tag=shopify-enhanced-docs
+
+# Pricing & billing
+php artisan vendor:publish --tag=shopify-enhanced-pricing
 ```
 
 ### 3. Configure Exception Handling (CRITICAL)
@@ -118,6 +137,20 @@ GDPR_NOTIFICATION_EMAIL=gdpr@yourapp.com
 
 ## 🎨 Optional Feature Installation
 
+> 📊 **For complete details on all available features and their files, see [Publish Commands Reference](publish-commands-reference.md).**
+
+### Customer Support System ⭐ New!
+
+```bash
+php artisan vendor:publish --tag=shopify-enhanced-support
+```
+
+**Adds:**
+- Support request submission
+- Admin reply system with console commands
+- Email notifications (both directions)
+- Reply display in UI
+
 ### FAQ System
 
 ```bash
@@ -125,9 +158,10 @@ php artisan vendor:publish --tag=shopify-enhanced-faq
 ```
 
 **Adds:**
-- FAQ React component
+- FAQ React component with search
+- Category filtering (clickable!)
 - FAQ data structure
-- Search functionality
+- Expandable answers with priority badges
 
 ### Documentation System
 
@@ -139,6 +173,7 @@ php artisan vendor:publish --tag=shopify-enhanced-docs
 - Documentation viewer
 - Markdown rendering
 - Search capabilities
+- Navigation tree
 
 ### Pricing Module
 
@@ -148,10 +183,24 @@ php artisan vendor:publish --tag=shopify-enhanced-pricing
 
 **Adds:**
 - Pricing page components
+- Advanced table editor
 - Subscription management
 - Billing integration
 
-### Admin Dashboard
+### Individual Components
+
+```bash
+# Just the sidebar
+php artisan vendor:publish --tag=shopify-enhanced-sidebar
+
+# Just the home page
+php artisan vendor:publish --tag=shopify-enhanced-home
+
+# Just the privacy policy
+php artisan vendor:publish --tag=shopify-enhanced-privacy
+```
+
+### Admin Dashboard (Separate Package)
 
 ```bash
 composer require bestdecoders/shopify-admin-dashboard
@@ -304,9 +353,10 @@ php artisan migrate
 ## 📚 Next Steps
 
 1. **[Exception Handling Setup](exception-handling.md)** - Critical for proper error handling
-2. **[Getting Started Guide](getting-started.md)** - Build your first features
-3. **[Webhook Implementation](webhook-implementation.md)** - Set up GDPR compliance
-4. **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
+2. **[Publish Commands Reference](publish-commands-reference.md)** - Complete chart of all available commands
+3. **[Getting Started Guide](getting-started.md)** - Build your first features
+4. **[Webhook Implementation](webhook-implementation.md)** - Set up GDPR compliance
+5. **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
 
 ## 💬 Need Help?
 

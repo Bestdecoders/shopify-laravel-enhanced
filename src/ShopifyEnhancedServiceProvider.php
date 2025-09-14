@@ -149,7 +149,21 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/js/components/sidebar.jsx' => resource_path('js/components/sidebar.jsx'),
         ], 'shopify-enhanced-sidebar');
-        
+
+        // Publish Support Components
+        $this->publishes([
+            __DIR__ . '/../resources/js/components/support.jsx' => resource_path('js/components/support.jsx'),
+            __DIR__ . '/../resources/js/Pages/Support.jsx' => resource_path('js/Pages/Support.jsx'),
+        ], 'shopify-enhanced-support');
+
+        // Register console commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\SupportReplyCommand::class,
+                \Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\SupportListCommand::class,
+            ]);
+        }
+
     }
 
 

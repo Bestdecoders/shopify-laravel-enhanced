@@ -1,9 +1,14 @@
-import React from 'react';
-import { Page, InlineGrid, InlineStack, BlockStack, Card, Box, Text, Banner } from '@shopify/polaris';
+import React, { useState } from 'react';
+import { Page, InlineGrid, InlineStack, BlockStack, Card, Box, Text, Banner, Button } from '@shopify/polaris';
 import Sidebar from '../components/sidebar';
 import FaqList from '../components/FaqList';
 
 const Faq = ({ initialFaqs = [], categories = [], tags = [] }) => {
+    const [selectedCategory, setSelectedCategory] = useState('');
+
+    const handleCategoryClick = (category) => {
+        setSelectedCategory(category);
+    };
     return (
         <Page title="Frequently Asked Questions" fullWidth>
             {/* Two-column layout: Sidebar and FAQ Content */}
@@ -82,33 +87,96 @@ const Faq = ({ initialFaqs = [], categories = [], tags = [] }) => {
                                     <Card>
                                         <Box padding="400">
                                             <BlockStack gap="300">
-                                                <Text variant="headingMd" as="h2">
-                                                    Browse by Category
-                                                </Text>
-                                                <div style={{ 
-                                                    display: 'grid', 
-                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-                                                    gap: '0.75rem' 
+                                                <InlineStack align="space-between" blockAlign="center">
+                                                    <Text variant="headingMd" as="h2">
+                                                        Browse by Category
+                                                    </Text>
+                                                    {selectedCategory && (
+                                                        <Text variant="bodySm" tone="subdued">
+                                                            Click a category to filter • Click "Show All" to reset
+                                                        </Text>
+                                                    )}
+                                                </InlineStack>
+                                                <div style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                                    gap: '0.75rem'
                                                 }}>
+                                                    {/* Show All Categories Option */}
+                                                    <Box
+                                                        padding="300"
+                                                        background={selectedCategory === '' ? "bg-surface-selected" : "bg-surface-secondary"}
+                                                        borderRadius="200"
+                                                        as="button"
+                                                        onClick={() => handleCategoryClick('')}
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            border: selectedCategory === '' ? '2px solid var(--p-color-border-interactive)' : '1px solid transparent',
+                                                            transition: 'all 0.2s ease',
+                                                            width: '100%'
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            if (selectedCategory !== '') {
+                                                                e.target.style.backgroundColor = 'var(--p-color-bg-surface-hover)';
+                                                                e.target.style.border = '1px solid var(--p-color-border-hover)';
+                                                            }
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            if (selectedCategory !== '') {
+                                                                e.target.style.backgroundColor = 'var(--p-color-bg-surface-secondary)';
+                                                                e.target.style.border = '1px solid transparent';
+                                                            }
+                                                        }}
+                                                    >
+                                                        <InlineStack align="space-between">
+                                                            <Text
+                                                                variant="bodyMd"
+                                                                as="span"
+                                                                fontWeight={selectedCategory === '' ? "semibold" : "regular"}
+                                                            >
+                                                                📋 Show All Categories
+                                                            </Text>
+                                                            <Text variant="bodySm" tone="subdued" as="span">
+                                                                {initialFaqs.length} FAQ{initialFaqs.length !== 1 ? 's' : ''}
+                                                            </Text>
+                                                        </InlineStack>
+                                                    </Box>
+
                                                     {categories.map((category) => {
                                                         const categoryCount = initialFaqs.filter(faq => faq.category === category).length;
                                                         return (
-                                                            <Box 
+                                                            <Box
                                                                 key={category}
-                                                                padding="300" 
-                                                                background="bg-surface-secondary" 
+                                                                padding="300"
+                                                                background={selectedCategory === category ? "bg-surface-selected" : "bg-surface-secondary"}
                                                                 borderRadius="200"
                                                                 as="button"
-                                                                onClick={() => {
-                                                                    // This will trigger the filter in FaqList component
-                                                                    const event = new CustomEvent('filterByCategory', { 
-                                                                        detail: { category } 
-                                                                    });
-                                                                    window.dispatchEvent(event);
+                                                                onClick={() => handleCategoryClick(category)}
+                                                                style={{
+                                                                    cursor: 'pointer',
+                                                                    border: selectedCategory === category ? '2px solid var(--p-color-border-interactive)' : '1px solid transparent',
+                                                                    transition: 'all 0.2s ease',
+                                                                    width: '100%'
+                                                                }}
+                                                                onMouseEnter={(e) => {
+                                                                    if (selectedCategory !== category) {
+                                                                        e.target.style.backgroundColor = 'var(--p-color-bg-surface-hover)';
+                                                                        e.target.style.border = '1px solid var(--p-color-border-hover)';
+                                                                    }
+                                                                }}
+                                                                onMouseLeave={(e) => {
+                                                                    if (selectedCategory !== category) {
+                                                                        e.target.style.backgroundColor = 'var(--p-color-bg-surface-secondary)';
+                                                                        e.target.style.border = '1px solid transparent';
+                                                                    }
                                                                 }}
                                                             >
                                                                 <InlineStack align="space-between">
-                                                                    <Text variant="bodyMd" as="span">
+                                                                    <Text
+                                                                        variant="bodyMd"
+                                                                        as="span"
+                                                                        fontWeight={selectedCategory === category ? "semibold" : "regular"}
+                                                                    >
                                                                         {category}
                                                                     </Text>
                                                                     <Text variant="bodySm" tone="subdued" as="span">
@@ -124,11 +192,32 @@ const Faq = ({ initialFaqs = [], categories = [], tags = [] }) => {
                                     </Card>
                                 )}
 
+                                {/* Clear Category Filter Button */}
+                                {selectedCategory && (
+                                    <Card>
+                                        <Box padding="300">
+                                            <InlineStack align="space-between" blockAlign="center">
+                                                <Text variant="bodyMd">
+                                                    Showing FAQs in category: <Text variant="bodyMd" fontWeight="semibold">{selectedCategory}</Text>
+                                                </Text>
+                                                <Button
+                                                    size="slim"
+                                                    onClick={() => setSelectedCategory('')}
+                                                >
+                                                    Clear filter
+                                                </Button>
+                                            </InlineStack>
+                                        </Box>
+                                    </Card>
+                                )}
+
                                 {/* Main FAQ List */}
-                                <FaqList 
+                                <FaqList
                                     initialFaqs={initialFaqs}
                                     categories={categories}
                                     tags={tags}
+                                    preSelectedCategory={selectedCategory}
+                                    onCategoryChange={setSelectedCategory}
                                 />
                             </BlockStack>
                         </Box>
