@@ -10,6 +10,7 @@ use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\HomeController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\UserSubscriptionController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\TestSubscriptionController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\SupportController;
+use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\ProductFilterController;
 
 Route::middleware('web')->group(function () {
    
@@ -110,6 +111,30 @@ Route::middleware('web')->group(function () {
             Route::get('/debug', [TestSubscriptionController::class, 'debug'])->name('debug');
         });
     }
+
+    // ===========================================
+    // PRODUCT FILTER API ROUTES
+    // ===========================================
+
+    Route::prefix('api/product-filter')->name('api.product-filter.')->middleware(['verify.shopify', 'Bestdecoders\ShopifyLaravelEnhanced\Middleware\ValidateProductFilterScopes', 'App\Http\Middleware\ExtractShopName'])->group(function () {
+        // Check individual product (with optional collection filtering)
+        Route::post('/product/check', [ProductFilterController::class, 'checkProduct'])->name('product.check');
+
+        // Check if product matches any of: vendor, title, or collections (OR logic)
+        Route::post('/product/match', [ProductFilterController::class, 'matchProduct'])->name('product.match');
+
+        // Search products by vendor, title, or collection
+        Route::post('/products/search', [ProductFilterController::class, 'searchProducts'])->name('products.search');
+
+        // Check product collection membership
+        Route::post('/product/collections', [ProductFilterController::class, 'checkCollectionMembership'])->name('product.collections');
+
+        // Get scope validation status
+        Route::get('/scopes/status', [ProductFilterController::class, 'getScopeStatus'])->name('scopes.status');
+
+        // Manual cleanup of old products (admin only)
+        Route::post('/cleanup', [ProductFilterController::class, 'cleanupOldProducts'])->name('cleanup');
+    });
 
     // ===========================================
     // MANDATORY GDPR COMPLIANCE WEBHOOKS ONLY

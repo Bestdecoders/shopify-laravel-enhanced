@@ -5,6 +5,9 @@ namespace Bestdecoders\ShopifyLaravelEnhanced\Providers;
 use Illuminate\Support\ServiceProvider;
 use Bestdecoders\ShopifyLaravelEnhanced\Services\ShopifyGraphqlService;
 use Bestdecoders\ShopifyLaravelEnhanced\Services\SubscriptionManagementService;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\ProductFilterService;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\ProductFilterWebhookHandler;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\ScopeValidationService;
 
 class ShopifyEnhancedServiceProvider extends ServiceProvider
 {
@@ -84,6 +87,17 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         // Register Subscription Management Service
         $this->app->singleton(SubscriptionManagementService::class, function ($app) {
             return new SubscriptionManagementService($app->make('shopify-graphql'));
+        });
+
+        // Register Product Filter Services
+        $this->app->singleton(ScopeValidationService::class);
+
+        $this->app->singleton(ProductFilterService::class, function ($app) {
+            return new ProductFilterService($app->make('shopify-graphql'));
+        });
+
+        $this->app->singleton(ProductFilterWebhookHandler::class, function ($app) {
+            return new ProductFilterWebhookHandler($app->make(ProductFilterService::class));
         });
     }
 
@@ -169,6 +183,11 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             // Register GraphQL query testing command
             if (class_exists('Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\TestGraphQLCommand')) {
                 $commands[] = 'Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\TestGraphQLCommand';
+            }
+
+            // Register Product Filter cleanup command
+            if (class_exists('Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\CleanupOldProductsCommand')) {
+                $commands[] = 'Bestdecoders\ShopifyLaravelEnhanced\Console\Commands\CleanupOldProductsCommand';
             }
 
             if (!empty($commands)) {

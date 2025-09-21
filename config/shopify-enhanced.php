@@ -26,6 +26,44 @@ return [
     'graphql_queries_config' => 'shopify-enhanced-graphql-queries',
 
     // ===========================================
+    // PRODUCT FILTER CONFIGURATION
+    // ===========================================
+
+    'product_filter' => [
+        // Feature activation
+        'enabled' => env('PRODUCT_FILTER_ENABLED', false),
+
+        // Required scopes for product filtering
+        'required_scopes' => ['read_products'],
+        'optional_scopes' => ['read_inventory'], // For inventory data
+
+        // Cache settings
+        'cache_ttl_days' => env('PRODUCT_FILTER_CACHE_TTL', 30),
+        'include_inventory_data' => env('PRODUCT_FILTER_INCLUDE_INVENTORY', false),
+
+        // Webhook filtering
+        'webhook_filtering_enabled' => env('PRODUCT_FILTER_WEBHOOK_FILTERING', true),
+
+        // Cleanup settings
+        'auto_cleanup_enabled' => env('PRODUCT_FILTER_AUTO_CLEANUP', true),
+        'cleanup_schedule' => env('PRODUCT_FILTER_CLEANUP_SCHEDULE', 'daily'),
+
+        // Webhook configuration for product filter
+        'webhooks' => [
+            'products/create',
+            'products/update',
+            'products/delete',
+            'collections/create',
+            'collections/update',
+            'collections/delete',
+            'app/scopes_update'
+        ],
+
+        // Webhook handler service
+        'webhook_handler' => \Bestdecoders\ShopifyLaravelEnhanced\Services\ProductFilterWebhookHandler::class,
+    ],
+
+    // ===========================================
     // WEBHOOK CONFIGURATION
     // ===========================================
     
@@ -124,6 +162,139 @@ return [
                 }
             GRAPHQL,
 
+            'details' => <<<GRAPHQL
+                query getProductDetails(\$id: ID!) {
+                    product(id: \$id) {
+                        id
+                        title
+                        handle
+                        vendor
+                        productType
+                        status
+                        tags
+                        updatedAt
+                        collections(first: 250) {
+                            edges {
+                                node {
+                                    id
+                                }
+                            }
+                        }
+                        variants(first: 1) {
+                            edges {
+                                node {
+                                    price
+                                    compareAtPrice
+                                    inventoryQuantity
+                                    weight
+                                    weightUnit
+                                }
+                            }
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            'check_collection_membership' => <<<GRAPHQL
+                query checkProductInCollections(\$productId: ID!, \$collectionIds: [ID!]!) {
+                    product(id: \$productId) {
+                        id
+                        collections(first: 250) {
+                            edges {
+                                node {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                    nodes(ids: \$collectionIds) {
+                        ... on Collection {
+                            id
+                            handle
+                            title
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            'collection_products' => <<<GRAPHQL
+                query getCollectionProducts(\$id: ID!, \$cursor: String, \$pageSize: Int!) {
+                    collection(id: \$id) {
+                        id
+                        products(first: \$pageSize, after: \$cursor) {
+                            pageInfo {
+                                hasNextPage
+                                hasPreviousPage
+                            }
+                            edges {
+                                node {
+                                    id
+                                    title
+                                    handle
+                                    vendor
+                                    productType
+                                    status
+                                    tags
+                                    updatedAt
+                                    collections(first: 250) {
+                                        edges {
+                                            node {
+                                                id
+                                            }
+                                        }
+                                    }
+                                    variants(first: 1) {
+                                        edges {
+                                            node {
+                                                price
+                                                compareAtPrice
+                                                inventoryQuantity
+                                                weight
+                                                weightUnit
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            GRAPHQL,
+
+        ],
+
+        'collection' => [
+            'details' => <<<GRAPHQL
+                query getCollectionDetails(\$id: ID!) {
+                    collection(id: \$id) {
+                        id
+                        handle
+                        title
+                        updatedAt
+                        productsCount
+                    }
+                }
+            GRAPHQL,
+
+            'search' => <<<GRAPHQL
+                query searchCollections(\$query: String, \$cursor: String, \$pageSize: Int!) {
+                    collections(first: \$pageSize, after: \$cursor, query: \$query) {
+                        pageInfo {
+                            hasNextPage
+                            hasPreviousPage
+                        }
+                        edges {
+                            node {
+                                id
+                                handle
+                                title
+                                updatedAt
+                                productsCount
+                            }
+                        }
+                    }
+                }
+            GRAPHQL,
         ],
     ],
 
