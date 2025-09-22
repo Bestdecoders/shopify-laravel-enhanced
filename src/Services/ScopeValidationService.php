@@ -22,7 +22,7 @@ class ScopeValidationService
         }
 
         // Get user scopes from kyon package or user model
-        $userScopesString = $user->shopify_scopes ?? env('SHOPIFY_API_SCOPES', '');
+        $userScopesString = config('shopify-app.api_scopes');
 
         if (!$userScopesString) {
             $result['message'] = 'User has no scopes';

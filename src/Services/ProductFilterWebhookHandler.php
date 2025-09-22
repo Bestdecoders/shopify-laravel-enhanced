@@ -275,7 +275,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
         $requiredScopes = config('shopify-enhanced.product_filter.required_scopes', ['read_products']);
 
         // Get user scopes from kyon package or user model
-        $userScopesString = $user->shopify_scopes ?? env('SHOPIFY_API_SCOPES', '');
+        $userScopesString = config('shopify-app.api_scopes');
         $userScopes = array_map('trim', explode(',', $userScopesString));
 
         foreach ($requiredScopes as $scope) {

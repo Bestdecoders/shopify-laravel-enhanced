@@ -107,9 +107,12 @@ class ProductFilterService
             // Check collection membership if needed
             $collectionIds = [];
             if (isset($productData['collections']['edges'])) {
-                $collectionIds = array_map(function ($edge) {
-                    return $this->normalizeProductId($edge['node']['id']);
-                }, $productData['collections']['edges']);
+                $edges = $productData['collections']['edges'];
+                if (is_array($edges) || $edges instanceof \ArrayAccess) {
+                    $collectionIds = array_map(function ($edge) {
+                        return $this->normalizeProductId($edge['node']['id']);
+                    }, is_array($edges) ? $edges : $edges->toArray());
+                }
             }
 
             // Prepare data for storage
@@ -266,9 +269,12 @@ class ProductFilterService
     {
         $collectionIds = [];
         if (isset($productData['collections']['edges'])) {
-            $collectionIds = array_map(function ($collectionEdge) {
-                return $this->normalizeProductId($collectionEdge['node']['id']);
-            }, $productData['collections']['edges']);
+            $edges = $productData['collections']['edges'];
+            if (is_array($edges) || $edges instanceof \ArrayAccess) {
+                $collectionIds = array_map(function ($collectionEdge) {
+                    return $this->normalizeProductId($collectionEdge['node']['id']);
+                }, is_array($edges) ? $edges : $edges->toArray());
+            }
         }
 
         $storeData = [
@@ -361,9 +367,13 @@ class ProductFilterService
             ];
 
             if (isset($response['product']['collections']['edges'])) {
-                $productCollectionIds = array_map(function ($edge) {
-                    return $this->normalizeProductId($edge['node']['id']);
-                }, $response['product']['collections']['edges']);
+                $edges = $response['product']['collections']['edges'];
+                $productCollectionIds = [];
+                if (is_array($edges) || $edges instanceof \ArrayAccess) {
+                    $productCollectionIds = array_map(function ($edge) {
+                        return $this->normalizeProductId($edge['node']['id']);
+                    }, is_array($edges) ? $edges : $edges->toArray());
+                }
 
                 $result['collections'] = $productCollectionIds;
 
@@ -414,7 +424,7 @@ class ProductFilterService
         $requiredScopes = config('shopify-enhanced.product_filter.required_scopes', ['read_products']);
 
         // Get user scopes from kyon package or user model
-        $userScopesString = $user->shopify_scopes ?? env('SHOPIFY_API_SCOPES', '');
+        $userScopesString = config('shopify-app.api_scopes');
         $userScopes = array_map('trim', explode(',', $userScopesString));
 
         foreach ($requiredScopes as $scope) {

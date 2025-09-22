@@ -55,3 +55,4 @@ class ValidateProductFilterScopes
         return $next($request);
     }
 }
+

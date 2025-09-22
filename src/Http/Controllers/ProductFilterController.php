@@ -7,6 +7,7 @@ use Bestdecoders\ShopifyLaravelEnhanced\Services\ScopeValidationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProductFilterController
 {
@@ -230,9 +231,9 @@ class ProductFilterController
 
                     // Need to fetch collection from Shopify
                     try {
-                        $collectionProducts = $this->productFilterService->searchProducts(
+                        $collectionProducts = $this->productFilterService->fetchProductsFromCollection(
                             $shopDomain,
-                            ['collection_id' => $collectionId]
+                            $collectionId
                         );
 
                         // Mark this product as queried for this collection (before checking)
@@ -258,7 +259,7 @@ class ProductFilterController
 
                     } catch (\Exception $e) {
                         // Log error but continue checking other collections
-                        \Log::warning("Failed to fetch collection {$collectionId}: " . $e->getMessage());
+                        Log::warning("Failed to fetch collection {$collectionId}: " . $e->getMessage());
                         continue;
                     }
                 }
