@@ -15,7 +15,7 @@
 | `shopify-enhanced-sidebar` | Component | Navigation sidebar component | 1 file |
 | `shopify-enhanced-home` | Page | Home page template | 1 file |
 | `shopify-enhanced-privacy` | Page | Privacy policy template | 1 file |
-| `shopify-enhanced-middleware` | Backend | HTTP middleware classes | Multiple files |
+| `shopify-enhanced-middleware-publish` | Backend | HTTP middleware classes (for customization) | Multiple files |
 | `shopify-enhanced-webhooks` | Backend | Webhook handler customization | 1 file |
 
 ## 📋 Detailed Publishing Chart
@@ -38,9 +38,10 @@ php artisan vendor:publish --provider="Bestdecoders\ShopifyLaravelEnhanced\Shopi
 | **Commands** | `Console/Commands/GrantGrandfatherAccessCommand.php` | `app/Console/Commands/` | Admin commands |
 | **Commands** | `Console/Commands/RevokeExpiredGrandfatheredAccessCommand.php` | `app/Console/Commands/` | Admin commands |
 | **Exception Handler** | `Stubs/Handler.php` | `app/Exceptions/Handler.php` | Enhanced error handling |
-| **Middleware** | `Middleware/ExtractShopName.php` | `app/Http/Middleware/` | Shop context middleware |
 
-**Tags included:** `default`, `shopify-enhanced-jobs`, `shopify-enhanced-mail`, `shopify-enhanced-services`, `shopify-enhanced-config`, `shopify-enhanced-emails`, `shopify-enhanced-commands`, `shopify-enhanced-exceptions`, `shopify-enhanced-middleware`
+**Tags included:** `default`, `shopify-enhanced-jobs`, `shopify-enhanced-mail`, `shopify-enhanced-services`, `shopify-enhanced-config`, `shopify-enhanced-emails`, `shopify-enhanced-commands`, `shopify-enhanced-exceptions`
+
+**Note:** Middleware is now automatically registered as aliases from the package. Use the aliases `enhancer.extract-shop`, `enhancer.billable`, `enhancer.inertia`, `enhancer.product-filter`, and `enhancer.inject-billing` in your routes.
 
 ---
 
@@ -62,7 +63,6 @@ php artisan vendor:publish --tag=shopify-enhanced-core
 | **Email Templates** | `resources/views/emails/` | `resources/views/emails/` | All email templates |
 | **CSS Styles** | `resources/css/app.css` | `resources/css/app.css` | Main stylesheet |
 | **Exception Handler** | `Stubs/Handler.php` | `app/Exceptions/Handler.php` | Enhanced error handling |
-| **Middleware** | `Middleware/ExtractShopName.php` | `app/Http/Middleware/` | Shop context middleware |
 
 **Perfect for:** Complete frontend setup with all components, hooks, and styles.
 
@@ -175,17 +175,19 @@ php artisan vendor:publish --tag=shopify-enhanced-privacy
 
 ### ⚙️ Backend System Commands
 
-#### `shopify-enhanced-middleware` - HTTP Middleware
+#### `shopify-enhanced-middleware-publish` - HTTP Middleware (Optional)
 ```bash
-php artisan vendor:publish --tag=shopify-enhanced-middleware
+php artisan vendor:publish --tag=shopify-enhanced-middleware-publish
 ```
 
 **What gets published:**
 | File Type | Source | Destination | Purpose |
 |-----------|--------|-------------|----------|
-| **All Middleware** | `Middleware/` directory | `app/Http/Middleware/` | All package middleware classes |
+| **All Middleware** | `Middleware/` directory | `app/Http/Middleware/` | All package middleware classes for customization |
 
-**Includes:** ExtractShopName, authentication helpers, request validators.
+**Includes:** ExtractShopName, Billable, HandleInertiaRequests, ValidateProductFilterScopes, InjectBillingDetails.
+
+**Note:** By default, middleware is served from the package and available as aliases (`enhancer.extract-shop`, `enhancer.billable`, `enhancer.inertia`, `enhancer.product-filter`, `enhancer.inject-billing`). Only publish if you need to customize the middleware classes.
 
 ---
 

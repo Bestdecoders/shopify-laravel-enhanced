@@ -223,30 +223,82 @@ class ProductFilterService
             // Use query from config
             $query = config('shopify-enhanced.queries.product.collection_products');
 
-            $response = $this->graphqlService->execute($shopDomain, $query, [
-                'id' => $collectionGid,
-                'cursor' => null,
-                'pageSize' => 250
-            ]);
-
             $products = collect();
+            $fetchedProductIds = [];
+            $cursor = null;
+            $hasNextPage = true;
+            $pageCount = 0;
 
-            if (isset($response['collection']['products']['edges'])) {
-                $fetchedProductIds = [];
+            // Fetch all products using cursor-based pagination
+            while ($hasNextPage) {
+                $pageCount++;
 
-                foreach ($response['collection']['products']['edges'] as $edge) {
-                    $productData = $edge['node'];
+                Log::info("Fetching collection products page {$pageCount}", [
+                    'shop_domain' => $shopDomain,
+                    'collection_id' => $normalizedCollectionId,
+                    'cursor' => $cursor
+                ]);
 
-                    $product = $this->storeOrUpdateProduct($shopDomain, $productData, $user->id);
+                $response = $this->graphqlService->execute($shopDomain, $query, [
+                    'id' => $collectionGid,
+                    'cursor' => $cursor,
+                    'pageSize' => 250
+                ]);
 
-                    // Mark this product as queried for this collection
-                    $product->addQueriedCollection($normalizedCollectionId);
-
-                    $products->push($product);
-                    $fetchedProductIds[] = $product->product_id;
+                if (!isset($response['collection']['products'])) {
+                    Log::warning("No products found in collection response", [
+                        'shop_domain' => $shopDomain,
+                        'collection_id' => $normalizedCollectionId,
+                        'page' => $pageCount
+                    ]);
+                    break;
                 }
 
-                // Dispatch background job to update OTHER existing products in our DB
+                $productsData = $response['collection']['products'];
+
+                // Process products from current page
+                if (isset($productsData['edges']) && !empty($productsData['edges'])) {
+                    foreach ($productsData['edges'] as $edge) {
+                        $productData = $edge['node'];
+
+                        $product = $this->storeOrUpdateProduct($shopDomain, $productData, $user->id);
+
+                        // Mark this product as queried for this collection
+                        $product->addQueriedCollection($normalizedCollectionId);
+
+                        $products->push($product);
+                        $fetchedProductIds[] = $product->product_id;
+                    }
+                }
+
+                // Check pagination info for next page
+                $pageInfo = $productsData['pageInfo'] ?? [];
+                $hasNextPage = $pageInfo['hasNextPage'] ?? false;
+
+                if ($hasNextPage) {
+                    // Extract cursor for next page from pageInfo
+                    $cursor = $pageInfo['endCursor'] ?? null;
+
+                    if (!$cursor) {
+                        Log::warning("No endCursor found for next page, stopping pagination", [
+                            'shop_domain' => $shopDomain,
+                            'collection_id' => $normalizedCollectionId,
+                            'page' => $pageCount
+                        ]);
+                        break;
+                    }
+                }
+            }
+
+            Log::info("Completed fetching collection products", [
+                'shop_domain' => $shopDomain,
+                'collection_id' => $normalizedCollectionId,
+                'total_pages' => $pageCount,
+                'total_products' => $products->count()
+            ]);
+
+            // Dispatch background job to update OTHER existing products in our DB
+            if (!empty($fetchedProductIds)) {
                 UpdateExistingProductsForCollectionJob::dispatch(
                     $shopDomain,
                     $normalizedCollectionId,

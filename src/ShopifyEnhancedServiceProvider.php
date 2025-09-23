@@ -71,10 +71,8 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
         ], ['default', 'shopify-enhanced-exceptions']);
 
-        // Publish Essential Middleware (ExtractShopName)
-        $this->publishes([
-            __DIR__ . '/Middleware/ExtractShopName.php' => app_path('Http/Middleware/ExtractShopName.php'),
-        ], ['default', 'shopify-enhanced-middleware']);
+        // Register middleware aliases (served from package)
+        $this->registerMiddleware();
 
 
         // === OPTIONAL FEATURE PUBLISHING ===
@@ -90,8 +88,6 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/css/app.css' => resource_path('css/app.css'),
             // Enhanced Exception Handler (critical for preventing auth errors)
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
-            // Essential Middleware (ExtractShopName for shop context)
-            __DIR__ . '/Middleware/ExtractShopName.php' => app_path('Http/Middleware/ExtractShopName.php'),
         ], 'shopify-enhanced-core');
 
         // Publish FAQ Page
@@ -124,10 +120,10 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/css/table-editor.css' => resource_path('css/table-editor.css'),
         ], 'shopify-enhanced-pricing');
 
-        // Publish Middleware
+        // Optional middleware publishing (for customization)
         $this->publishes([
             __DIR__ . '/Middleware' => app_path('Http/Middleware'),
-        ], 'shopify-enhanced-middleware');
+        ], 'shopify-enhanced-middleware-publish');
 
         // Publish Webhook Handler (for user customization)
         $this->publishes([
@@ -166,6 +162,20 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
 
     }
 
+    /**
+     * Register middleware aliases from package
+     */
+    protected function registerMiddleware()
+    {
+        $router = $this->app['router'];
+
+        // Register middleware aliases
+        $router->aliasMiddleware('enhancer.extract-shop', \Bestdecoders\ShopifyLaravelEnhanced\Middleware\ExtractShopName::class);
+        $router->aliasMiddleware('enhancer.billable', \Bestdecoders\ShopifyLaravelEnhanced\Middleware\Billable::class);
+        $router->aliasMiddleware('enhancer.inertia', \Bestdecoders\ShopifyLaravelEnhanced\Middleware\HandleInertiaRequests::class);
+        $router->aliasMiddleware('enhancer.product-filter', \Bestdecoders\ShopifyLaravelEnhanced\Middleware\ValidateProductFilterScopes::class);
+        $router->aliasMiddleware('enhancer.inject-billing', \Bestdecoders\ShopifyLaravelEnhanced\Middleware\InjectBillingDetails::class);
+    }
 
     /**
      * Register any application services.

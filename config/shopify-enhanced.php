@@ -186,8 +186,6 @@ return [
                                     price
                                     compareAtPrice
                                     inventoryQuantity
-                                    weight
-                                    weightUnit
                                 }
                             }
                         }
@@ -225,6 +223,7 @@ return [
                             pageInfo {
                                 hasNextPage
                                 hasPreviousPage
+                                endCursor
                             }
                             edges {
                                 node {
@@ -249,8 +248,6 @@ return [
                                                 price
                                                 compareAtPrice
                                                 inventoryQuantity
-                                                weight
-                                                weightUnit
                                             }
                                         }
                                     }
