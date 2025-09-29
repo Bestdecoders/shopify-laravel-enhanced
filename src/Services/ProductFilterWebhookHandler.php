@@ -36,7 +36,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
 
             if ($existingProduct) {
                 $this->updateProductFromWebhook($existingProduct, $productData);
-                Log::info("Updated cached product from webhook", [
+                debug_log("Updated cached product from webhook", [
                     'product_id' => $productData['id'],
                     'shop_domain' => $shopDomain
                 ]);
@@ -73,7 +73,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
                 ->where('product_id', $productData['id'])
                 ->delete();
 
-            Log::info("Removed product from cache", [
+            debug_log("Removed product from cache", [
                 'product_id' => $productData['id'],
                 'shop_domain' => $shopDomain,
                 'deleted_count' => $deletedCount
@@ -135,7 +135,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
                 $product->update(['collection_ids' => $collectionIds]);
             }
 
-            Log::info("Removed collection from cached products", [
+            debug_log("Removed collection from cached products", [
                 'collection_id' => $collectionId,
                 'shop_domain' => $shopDomain,
                 'affected_products' => $affectedProducts->count()
@@ -163,7 +163,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
             $scopeData = $request->all();
             $shopDomain = $request->header('X-Shopify-Shop-Domain');
 
-            Log::info("App scopes updated", [
+            debug_log("App scopes updated", [
                 'shop_domain' => $shopDomain,
                 'new_scopes' => $scopeData
             ]);
@@ -209,7 +209,7 @@ class ProductFilterWebhookHandler extends WebhookHandlerService
             // Always dispatch background job to fetch collection products and update database
             UpdateCollectionProductsJob::dispatch($shopDomain, $collectionId, $action);
 
-            Log::info("Collection {$action} webhook: Background job dispatched", [
+            debug_log("Collection {$action} webhook: Background job dispatched", [
                 'collection_id' => $collectionId,
                 'shop_domain' => $shopDomain,
                 'collection_title' => $collectionData['title'] ?? 'Unknown'

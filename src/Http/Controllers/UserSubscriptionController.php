@@ -102,7 +102,7 @@ class UserSubscriptionController extends Controller
                 ]);
             }
 
-            Log::info('Subscription cancelled', [
+            debug_log('Subscription cancelled', [
                 'user_id' => $userModel->id,
                 'charge_id' => $charge->id,
                 'reason' => $request->input('reason'),
@@ -158,7 +158,7 @@ class UserSubscriptionController extends Controller
 
             $charge = $this->subscriptionService->getCurrentCharge($userModel);
 
-            Log::info('Free time extended', [
+            debug_log('Free time extended', [
                 'user_id' => $userModel->id,
                 'days_added' => $request->input('days'),
                 'reason' => $request->input('reason'),
@@ -215,7 +215,7 @@ class UserSubscriptionController extends Controller
             $charge = $this->subscriptionService->getCurrentCharge($userModel);
             $coupon = CouponCode::where('code', $request->input('coupon_code'))->first();
 
-            Log::info('Coupon applied', [
+            debug_log('Coupon applied', [
                 'user_id' => $userModel->id,
                 'coupon_code' => $request->input('coupon_code'),
                 'applied_by' => auth()->id()
@@ -266,7 +266,7 @@ class UserSubscriptionController extends Controller
                 'cancellation_reason' => null
             ]);
 
-            Log::info('Subscription reactivated', [
+            debug_log('Subscription reactivated', [
                 'user_id' => $userModel->id,
                 'charge_id' => $charge->id,
                 'reactivated_by' => auth()->id()

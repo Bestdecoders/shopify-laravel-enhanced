@@ -233,7 +233,7 @@ class ProductFilterService
             while ($hasNextPage) {
                 $pageCount++;
 
-                Log::info("Fetching collection products page {$pageCount}", [
+                debug_log("Fetching collection products page {$pageCount}", [
                     'shop_domain' => $shopDomain,
                     'collection_id' => $normalizedCollectionId,
                     'cursor' => $cursor
@@ -290,7 +290,7 @@ class ProductFilterService
                 }
             }
 
-            Log::info("Completed fetching collection products", [
+            debug_log("Completed fetching collection products", [
                 'shop_domain' => $shopDomain,
                 'collection_id' => $normalizedCollectionId,
                 'total_pages' => $pageCount,
@@ -453,7 +453,7 @@ class ProductFilterService
 
         $deletedCount = ShopifyProduct::olderThan($ttlDays)->delete();
 
-        Log::info("Cleaned up {$deletedCount} old products", [
+        debug_log("Cleaned up {$deletedCount} old products", [
             'ttl_days' => $ttlDays,
             'deleted_count' => $deletedCount
         ]);

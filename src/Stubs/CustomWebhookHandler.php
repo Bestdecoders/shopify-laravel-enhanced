@@ -36,7 +36,7 @@ class CustomWebhookHandler extends WebhookHandlerService
         $shopDomain = $request->input('shop_domain');
         
         // Custom order processing logic
-        Log::info("Custom order creation handler for order: {$orderNumber}");
+        debug_log("Custom order creation handler for order: {$orderNumber}");
         
         // Example: Update inventory, send notifications, trigger fulfillment, etc.
         // $this->updateInventory($request->input('line_items'));
@@ -68,7 +68,7 @@ class CustomWebhookHandler extends WebhookHandlerService
         $shopDomain = $request->input('shop_domain');
         
         // Custom product update logic
-        Log::info("Custom product update handler for product: {$productTitle}");
+        debug_log("Custom product update handler for product: {$productTitle}");
         
         // Example: Update search index, sync with external systems, etc.
         // $this->updateSearchIndex($productId, $request->all());
@@ -100,7 +100,7 @@ class CustomWebhookHandler extends WebhookHandlerService
         $shopDomain = $request->input('shop_domain');
         
         // Custom GDPR data collection logic
-        Log::info("Custom GDPR data request for customer: {$customerEmail}");
+        debug_log("Custom GDPR data request for customer: {$customerEmail}");
         
         // Example: Collect all customer data from your custom tables
         // $customerData = $this->collectCustomerData($customerId);
@@ -130,7 +130,7 @@ class CustomWebhookHandler extends WebhookHandlerService
         $shopDomain = $request->input('shop_domain');
         
         // Custom GDPR data erasure logic
-        Log::info("Custom GDPR data erasure for customer: {$customerEmail}");
+        debug_log("Custom GDPR data erasure for customer: {$customerEmail}");
         
         // Example: Delete customer data from your custom tables
         // $this->eraseCustomerData($customerId);
@@ -158,7 +158,7 @@ class CustomWebhookHandler extends WebhookHandlerService
         $shopDomain = $request->input('shop_domain');
         
         // Custom shop data erasure logic
-        Log::info("Custom GDPR shop data erasure for: {$shopDomain}");
+        debug_log("Custom GDPR shop data erasure for: {$shopDomain}");
         
         // Example: Delete all shop-related data from your custom tables
         // $this->eraseShopData($shopDomain);
@@ -184,7 +184,7 @@ class CustomWebhookHandler extends WebhookHandlerService
     {
         $shopDomain = $request->input('shop_domain');
         
-        Log::info("Custom generic webhook handler: {$webhookType}");
+        debug_log("Custom generic webhook handler: {$webhookType}");
         
         // Handle custom webhook types
         switch ($webhookType) {
@@ -256,7 +256,7 @@ class CustomWebhookHandler extends WebhookHandlerService
     private function sendWelcomeEmail(string $shopDomain): void
     {
         // Implementation here
-        Log::info("Sending welcome email to: {$shopDomain}");
+        debug_log("Sending welcome email to: {$shopDomain}");
     }
 
     /**
@@ -265,7 +265,7 @@ class CustomWebhookHandler extends WebhookHandlerService
     private function setupDefaultSettings(string $shopDomain): void
     {
         // Implementation here
-        Log::info("Setting up default settings for: {$shopDomain}");
+        debug_log("Setting up default settings for: {$shopDomain}");
     }
 
     /**
@@ -274,6 +274,6 @@ class CustomWebhookHandler extends WebhookHandlerService
     private function cleanupShopData(string $shopDomain): void
     {
         // Implementation here
-        Log::info("Cleaning up data for: {$shopDomain}");
+        debug_log("Cleaning up data for: {$shopDomain}");
     }
 }

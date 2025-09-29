@@ -23,7 +23,7 @@ class WebhookController extends Controller
     public function customerDataRequest(Request $request): JsonResponse
     {
         try {
-            Log::info('Customer Data Request webhook received', [
+            debug_log('Customer Data Request webhook received', [
                 'shop' => $request->input('shop_domain'),
                 'customer_id' => $request->input('customer.id'),
                 'timestamp' => now()
@@ -58,7 +58,7 @@ class WebhookController extends Controller
     public function customerDataErasure(Request $request): JsonResponse
     {
         try {
-            Log::info('Customer Data Erasure webhook received', [
+            debug_log('Customer Data Erasure webhook received', [
                 'shop' => $request->input('shop_domain'),
                 'customer_id' => $request->input('customer.id'),
                 'timestamp' => now()
@@ -93,7 +93,7 @@ class WebhookController extends Controller
     public function shopDataErasure(Request $request): JsonResponse
     {
         try {
-            Log::info('Shop Data Erasure webhook received', [
+            debug_log('Shop Data Erasure webhook received', [
                 'shop' => $request->input('shop_domain'),
                 'timestamp' => now()
             ]);

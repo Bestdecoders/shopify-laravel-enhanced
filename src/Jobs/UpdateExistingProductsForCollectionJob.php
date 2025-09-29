@@ -53,7 +53,7 @@ class UpdateExistingProductsForCollectionJob implements ShouldQueue
                 $product->addQueriedCollection($this->collectionId);
             }
 
-            Log::info("Background job: Updated existing products for collection", [
+            debug_log("Background job: Updated existing products for collection", [
                 'shop_domain' => $this->shopDomain,
                 'collection_id' => $this->collectionId,
                 'existing_products_checked' => $existingProducts->count(),

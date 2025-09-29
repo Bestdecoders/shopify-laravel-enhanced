@@ -37,7 +37,7 @@ class UpdateCollectionProductsJob implements ShouldQueue
                 ['collection_id' => $this->collectionId]
             );
 
-            Log::info("Background job completed: Update collection products", [
+            debug_log("Background job completed: Update collection products", [
                 'action' => $this->action,
                 'shop_domain' => $this->shopDomain,
                 'collection_id' => $this->collectionId,

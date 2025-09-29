@@ -95,7 +95,7 @@ class ScopeValidationService
 
         $validation = $this->validateProductFilterScopes($user);
 
-        Log::info("Product filter scope validation", [
+        debug_log("Product filter scope validation", [
             'context' => $context,
             'user_id' => $user->id ?? null,
             'shop_domain' => $user->name ?? null,

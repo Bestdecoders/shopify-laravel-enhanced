@@ -53,7 +53,7 @@ class ShopifyGraphqlService
     protected function logErrors($errors, $prefix, $query)
     {
         Log::error($prefix . json_encode($errors));
-        Log::info('Error Source: ' . $query);
+        debug_log('Error Source: ' . $query);
 
         throw new Exception(json_encode($errors));
     }

@@ -52,7 +52,7 @@ class SubscriptionManagementService
                     'cancellation_reason' => $reason
                 ]);
 
-                Log::info('Subscription cancelled via GraphQL', [
+                debug_log('Subscription cancelled via GraphQL', [
                     'user_id' => $user->id,
                     'charge_id' => $activeCharge->id,
                     'shopify_subscription_id' => $shopifySubscriptionId,
@@ -136,7 +136,7 @@ class SubscriptionManagementService
                 $charge->coupon_code = $couponCode;
                 $charge->save();
 
-                Log::info('Subscription created via GraphQL', [
+                debug_log('Subscription created via GraphQL', [
                     'user_id' => $user->id,
                     'charge_id' => $charge->id,
                     'shopify_subscription_id' => $shopifySubscriptionId,
@@ -238,7 +238,7 @@ class SubscriptionManagementService
                 if ($charge->status !== $newStatus) {
                     $charge->update(['status' => $newStatus]);
                     
-                    Log::info('Charge status synced via GraphQL', [
+                    debug_log('Charge status synced via GraphQL', [
                         'charge_id' => $charge->id,
                         'old_status' => $charge->status,
                         'new_status' => $newStatus,
@@ -285,7 +285,7 @@ class SubscriptionManagementService
                 $newEndDate = $currentEndDate->addDays($days);
                 $existingFreeCharge->update(['free_until' => $newEndDate]);
                 
-                Log::info('Free time extended', [
+                debug_log('Free time extended', [
                     'user_id' => $user->id,
                     'charge_id' => $existingFreeCharge->id,
                     'days_added' => $days,
@@ -303,7 +303,7 @@ class SubscriptionManagementService
                 $charge->grant_reason = $reason;
                 $charge->save();
 
-                Log::info('Free time granted', [
+                debug_log('Free time granted', [
                     'user_id' => $user->id,
                     'charge_id' => $charge->id,
                     'days_granted' => $days,

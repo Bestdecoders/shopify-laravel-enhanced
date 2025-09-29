@@ -84,7 +84,7 @@ class CleanupOldProductsCommand extends Command
                     $deletedCount = $this->performCleanup($days, $shopDomain);
                     $this->info("Successfully deleted {$deletedCount} old products.");
 
-                    Log::info("Manual product cleanup completed", [
+                    debug_log("Manual product cleanup completed", [
                         'deleted_count' => $deletedCount,
                         'days_threshold' => $days,
                         'shop_domain' => $shopDomain,

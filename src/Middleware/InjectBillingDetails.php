@@ -95,7 +95,7 @@ class InjectBillingDetails
             // Also make it available as a request attribute for easier access
             $request->attributes->set('billing_details', $billingDetails);
 
-            Log::debug('InjectBillingDetails: Billing details injected', [
+            debug_log('InjectBillingDetails: Billing details injected', [
                 'shop_domain' => $shop->getDomain()->toNative(),
                 'subscription_status' => $billingDetails['subscription_status'],
                 'has_active_subscription' => $billingDetails['has_active_subscription'],

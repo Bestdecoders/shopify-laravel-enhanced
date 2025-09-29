@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
+        // Only create the table if product filter is enabled
+        if (!config('shopify-enhanced.product_filter.enabled', false)) {
+            return;
+        }
+
         Schema::create('shopify_products', function (Blueprint $table) {
             $table->id();
             $table->string('product_id')->index();
@@ -55,6 +60,7 @@ return new class extends Migration
 
     public function down()
     {
+        // Only drop the table if it exists (which means it was created when product filter was enabled)
         Schema::dropIfExists('shopify_products');
     }
 };

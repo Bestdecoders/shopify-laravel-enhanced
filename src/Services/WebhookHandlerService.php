@@ -33,7 +33,7 @@ class WebhookHandlerService
         $customerId = $request->input('customer.id');
         $shopDomain = $request->input('shop_domain');
         
-        Log::info("Default customer data request handler executed for customer: {$customerId}");
+        debug_log("Default customer data request handler executed for customer: {$customerId}");
         
         return [
             'action' => 'customer_data_request',
@@ -57,7 +57,7 @@ class WebhookHandlerService
         $customerId = $request->input('customer.id');
         $shopDomain = $request->input('shop_domain');
         
-        Log::info("Default customer data erasure handler executed for customer: {$customerId}");
+        debug_log("Default customer data erasure handler executed for customer: {$customerId}");
         
         return [
             'action' => 'customer_data_erasure',
@@ -80,7 +80,7 @@ class WebhookHandlerService
         // Default implementation - users can override
         $shopDomain = $request->input('shop_domain');
         
-        Log::info("Default shop data erasure handler executed for shop: {$shopDomain}");
+        debug_log("Default shop data erasure handler executed for shop: {$shopDomain}");
         
         return [
             'action' => 'shop_data_erasure',
@@ -113,7 +113,7 @@ class WebhookHandlerService
         
         // Fallback: basic validation without requiring configuration
         // This allows the webhooks to work by default
-        Log::info('Using basic webhook validation - no configuration required');
+        debug_log('Using basic webhook validation - no configuration required');
         return true;
     }
 
