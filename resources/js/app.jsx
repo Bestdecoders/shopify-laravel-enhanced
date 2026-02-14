@@ -8,6 +8,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import "@shopify/polaris/build/esm/styles.css";
 import createApp from '@shopify/app-bridge';
 import { NavigationMenu, AppLink } from '@shopify/app-bridge/actions';
+import TawkTo from './components/TawkTo';
 
 InertiaProgress.init();
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
@@ -51,6 +52,7 @@ createInertiaApp({
         const root = createRoot(el);
         root.render(
             <AppProvider i18n={translations}>
+                <TawkTo />
                 <App {...props} />
             </AppProvider>
         );

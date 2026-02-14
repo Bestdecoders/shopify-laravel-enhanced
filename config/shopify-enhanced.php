@@ -129,6 +129,29 @@ return [
         ],
     ],
 
+    // ===========================================
+    // TAWK.TO CHAT WIDGET CONFIGURATION
+    // ===========================================
+
+    'tawk_to' => [
+        'enabled' => env('TAWK_TO_ENABLED', true),
+        'property_id' => env('TAWK_TO_PROPERTY_ID'),
+        'widget_id' => env('TAWK_TO_WIDGET_ID'),
+
+        // Widget position (bottom-right by default)
+        // Options: 'bottom-right', 'bottom-left'
+        'position' => env('TAWK_TO_POSITION', 'bottom-right'),
+
+        // Auto-hide on mobile
+        'hide_on_mobile' => env('TAWK_TO_HIDE_ON_MOBILE', false),
+
+        // Widget opacity (0.1 to 1.0)
+        'opacity' => env('TAWK_TO_OPACITY', 1.0),
+
+        // Widget size (small, medium, large)
+        'size' => env('TAWK_TO_SIZE', 'medium'),
+    ],
+
     'queries' => [
         'shop' => <<<GRAPHQL
             query {

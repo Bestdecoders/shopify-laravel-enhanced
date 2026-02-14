@@ -90,7 +90,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/css/documentation.css' => resource_path('css/documentation.css'),
             // Enhanced Exception Handler (critical for preventing auth errors)
             __DIR__ . '/Stubs/Handler.php' => app_path('Exceptions/Handler.php'),
-        ], 'shopify-enhanced-core');
+        ], ['shopify-enhanced-core', 'default']);
 
         // Publish All Pages
         $this->publishes([
