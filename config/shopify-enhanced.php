@@ -125,7 +125,8 @@ return [
 
         // Telegram commands mapping
         'commands' => [
-            // Example: 'start' => \App\Telegram\Commands\StartCommand::class,
+            // AI Chat Command - Chat with AI assistant
+            'ai' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\AiChatCommand::class,
         ],
     ],
 
@@ -150,6 +151,40 @@ return [
 
         // Widget size (small, medium, large)
         'size' => env('TAWK_TO_SIZE', 'medium'),
+    ],
+
+    // ===========================================
+    // BRAIN AI SERVICE CONFIGURATION
+    // ===========================================
+
+    'brain' => [
+        // Default AI provider (openai, anthropic)
+        'default_provider' => env('BRAIN_DEFAULT_PROVIDER', 'openai'),
+
+        // Default model to use (provider-specific)
+        'default_model' => env('BRAIN_DEFAULT_MODEL', 'gpt-4o-mini'),
+
+        // Configuration for each provider
+        'providers' => [
+            'openai' => [
+                'api_key' => env('OPENAI_API_KEY'),
+                'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+                'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+            ],
+
+            'anthropic' => [
+                'api_key' => env('ANTHROPIC_API_KEY'),
+                'base_url' => env('ANTHROPIC_BASE_URL', 'https://api.anthropic.com/v1'),
+                'model' => env('ANTHROPIC_MODEL', 'claude-3-5-sonnet-20241022'),
+            ],
+        ],
+
+        // Memory cache settings (in minutes)
+        'memory_cache_ttl' => env('BRAIN_MEMORY_TTL', 1440), // 24 hours
+
+        // Default settings
+        'default_temperature' => env('BRAIN_DEFAULT_TEMPERATURE', 0.7),
+        'default_max_tokens' => env('BRAIN_DEFAULT_MAX_TOKENS', 1000),
     ],
 
     'queries' => [

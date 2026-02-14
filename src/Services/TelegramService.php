@@ -11,6 +11,11 @@ class TelegramService
     protected string $chatId;
     protected bool $enabled;
 
+    /**
+     * Current update from webhook
+     */
+    protected ?array $currentUpdate = null;
+
     public function __construct()
     {
         $this->botToken = config('shopify-enhanced.telegram.bot_token');
@@ -19,17 +24,42 @@ class TelegramService
     }
 
     /**
-     * Send a text message
+     * Set current update from webhook
+     */
+    public function setCurrentUpdate(array $update): self
+    {
+        $this->currentUpdate = $update;
+        return $this;
+    }
+
+    /**
+     * Get last/current update
+     */
+    public function getLastUpdate(): ?array
+    {
+        return $this->currentUpdate;
+    }
+
+    /**
+     * Send a text message to configured chat
      */
     public function send(string $message, array $options = []): bool
     {
-        if (!$this->isConfigured()) {
+        return $this->sendToChat($this->chatId, $message, $options);
+    }
+
+    /**
+     * Send a text message to specific chat
+     */
+    public function sendToChat(string $chatId, string $message, array $options = []): bool
+    {
+        if (!$this->isConfigured() && empty($chatId)) {
             return false;
         }
 
         try {
             $params = array_merge([
-                'chat_id' => $this->chatId,
+                'chat_id' => $chatId,
                 'text' => $message,
                 'parse_mode' => 'HTML',
             ], $options);

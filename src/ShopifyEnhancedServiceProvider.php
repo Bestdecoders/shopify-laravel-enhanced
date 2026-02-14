@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Osiset\ShopifyApp\Messaging\Events\ShopAuthenticatedEvent;
 use Bestdecoders\ShopifyLaravelEnhanced\Listeners\RunAfterInstallJob;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\BrainService;
 
 
 class ShopifyEnhancedServiceProvider extends ServiceProvider
@@ -14,6 +15,10 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
      * Bootstrap any package services.
      */ public function boot()
     {
+        // Load package helpers (useBrain function)
+        if (file_exists(__DIR__ . '/helpers.php')) {
+            require_once __DIR__ . '/helpers.php';
+        }
 
         // Load Package Routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
@@ -38,6 +43,11 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
             __DIR__ . '/Jobs/AppUninstalledJob.php' => app_path('Jobs/AppUninstalledJob.php'),
         ], ['default', 'shopify-enhanced-jobs']);
 
+        // Publish Telegram Job (background processing for webhooks)
+        $this->publishes([
+            __DIR__ . '/Jobs/ProcessTelegramWebhookJob.php' => app_path('Jobs/ProcessTelegramWebhookJob.php'),
+        ], ['default', 'shopify-enhanced-jobs', 'shopify-enhanced-telegram']);
+
         // Publish Mail classes (required by jobs)
         $this->publishes([
             __DIR__ . '/Mail' => app_path('Mail'),
@@ -47,6 +57,11 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/Services' => app_path('Services'),
         ], ['default', 'shopify-enhanced-services']);
+
+        // Publish Telegram Commands (for telegram bot commands)
+        $this->publishes([
+            __DIR__ . '/Telegram' => app_path('Telegram'),
+        ], ['default', 'shopify-enhanced-telegram']);
 
         // Publish Config (required by jobs and services)
         $this->publishes([
@@ -183,14 +198,17 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
-
         $this->mergeConfigFrom(
             __DIR__ . '/../config/shopify-enhanced.php',
             'shopify-enhanced'
         );
-        
- 
+
+        // Register BrainService as singleton (single instance per request)
+        $this->app->singleton(BrainService::class);
+
+        // Register AI vendors (optional, for direct injection)
+        $this->app->bind(\Bestdecoders\ShopifyLaravelEnhanced\Services\AI\OpenAiVendor::class);
+        $this->app->bind(\Bestdecoders\ShopifyLaravelEnhanced\Services\AI\AnthropicVendor::class);
     }
 }
 

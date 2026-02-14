@@ -14,10 +14,10 @@ use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\ProductFilterController
 
 
 Route::middleware('web')->group(function () {
-   
+
     // Bestdecoders Privacy Policy
     Route::get('/privacy', [HomeController::class, 'privacy'])->name('bestdecoders.privacy');
-    
+
     Route::get('shopify-enhanced/test', [ShopifyController::class, 'test'])->name('shopify-enhanced.test');
     Route::get('shopify-enhanced/shop-info/{shop}', [ShopifyController::class, 'getShopInfo']);
     Route::post('shopify-enhanced/send-thanks-email/{shop}', [ShopifyController::class, 'sendThanksEmail']);
@@ -156,10 +156,10 @@ Route::middleware('web')->group(function () {
         Route::post('customers/redact', [WebhookController::class, 'customerDataErasure'])->name('customers.redact');
         Route::post('shop/redact', [WebhookController::class, 'shopDataErasure'])->name('shop.redact');
     });
-
-    // ===========================================
-    // TELEGRAM WEBHOOK ROUTE
-    // ===========================================
-
-    Route::post('telegram/webhook', [\Bestdecoders\ShopifyLaravelEnhanced\Services\TelegramWebhookHandler::class, 'handle'])->name('telegram.webhook');
 });
+
+// ===========================================
+// TELEGRAM WEBHOOK ROUTE (outside web middleware - no session/CSRF needed)
+// ===========================================
+
+Route::post('telegram/webhook', [\Bestdecoders\ShopifyLaravelEnhanced\Services\TelegramWebhookHandler::class, 'handle'])->name('telegram.webhook');
