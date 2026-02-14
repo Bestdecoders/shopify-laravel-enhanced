@@ -6,10 +6,40 @@ import { AppProvider } from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
 import { InertiaProgress } from '@inertiajs/progress';
 import "@shopify/polaris/build/esm/styles.css";
+import createApp from '@shopify/app-bridge';
+import { NavigationMenu, AppLink } from '@shopify/app-bridge/actions';
 
 InertiaProgress.init();
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 window.global = window;
+
+// Initialize Shopify App
+const shopifyApp = createApp({
+  apiKey: import.meta.env.VITE_SHOPIFY_API_KEY,
+  host: new URL(window.location.href).searchParams.get('host'),
+});
+
+// Get current host parameter
+const currentHost = new URL(window.location.href).searchParams.get('host');
+
+// Create navigation links
+const aboutLink = AppLink.create(shopifyApp, {
+    label: "About",
+    destination: `/about?host=${currentHost}`,
+    destinationType: "app",
+});
+
+const settingsLink = AppLink.create(shopifyApp, {
+    label: "Settings",
+    destination: `/setup?host=${currentHost}`,
+    destinationType: "app",
+});
+
+// Create navigation menu
+NavigationMenu.create(shopifyApp, {
+  items: [ settingsLink, aboutLink]
+});
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>

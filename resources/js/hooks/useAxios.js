@@ -14,11 +14,11 @@ export const useAxios = () => {
         const interceptor = axios.interceptors.request.use(async (config) => {
             try {
                 const tokenPromise = shopify.idToken();
-                const timeoutPromise = new Promise((_, reject) => 
+                const timeoutPromise = new Promise((_, reject) =>
                     setTimeout(() => reject(new Error('Token request timeout')), 5000)
                 );
                 const token = await Promise.race([tokenPromise, timeoutPromise]);
-                
+
                 config.headers.Authorization = `Bearer ${token}`;
                 config.params = { ...config.params, host, token }; // Add token parameter for Laravel
                 return config;

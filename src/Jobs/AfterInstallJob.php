@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\ThanksMail;
 use Bestdecoders\ShopifyLaravelEnhanced\Services\ShopifyGraphqlService;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\TelegramService;
 
 class AfterInstallJob implements ShouldQueue
 {
@@ -108,21 +109,42 @@ class AfterInstallJob implements ShouldQueue
     }
 
     /**
-     * Notify the admin about the installation.
+     * Notify admin about installation via Telegram.
      *
      * @param array $shopInfo
      * @return void
      */
     protected function notifyAdmin(array $shopInfo): void
     {
-        $adminEmail = config('shopify-enhanced.admin_email');
-        if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-            Mail::to($adminEmail)->send(app(ThanksMail::class, [
-                'shopInfo' => $shopInfo,
-            ]));
-            \debug_log("Admin notified about installation for shop: {$this->shop->name}");
-        } else {
-            Log::warning("Invalid or missing admin email. Notification not sent.");
+        $telegram = app(TelegramService::class);
+
+        if (!$telegram->isConfigured()) {
+            \debug_log("Telegram not configured. Skipping admin notification for shop: {$this->shop->name}");
+            return;
+        }
+
+        try {
+            $shopDomain = $this->shop->name;
+            $userModel = config('shopify-enhanced.user_model');
+            $user = $userModel::where('name', $shopDomain)->first();
+
+            $ownerMail = $user->owner_email ?? 'N/A';
+            $planName = $shopInfo['shop']['plan']['displayName'] ?? 'N/A';
+
+            $message = $telegram->formatMessage([
+                'title' => '🎉 New Installation',
+                'lines' => [
+                    ['key' => 'Shop', 'value' => $shopDomain],
+                    ['key' => 'Owner Mail', 'value' => $ownerMail],
+                    ['key' => 'Plan', 'value' => $planName],
+                ],
+                'footer' => 'A new customer has installed your app.',
+            ]);
+
+            $telegram->send($message);
+            \debug_log("Admin notified via Telegram about installation for shop: {$this->shop->name}");
+        } catch (\Exception $e) {
+            Log::error("Failed to notify admin for {$this->shop->name}: {$e->getMessage()}");
         }
     }
 }

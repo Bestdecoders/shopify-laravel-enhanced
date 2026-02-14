@@ -11,6 +11,7 @@ use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Messaging\Jobs\AppUninstalledJob as BaseAppUninstalledJob;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\UserUninstallNotification;
 use Bestdecoders\ShopifyLaravelEnhanced\Mail\AdminUninstallNotification;
+use Bestdecoders\ShopifyLaravelEnhanced\Services\TelegramService;
 
 class BaseUninstallJob extends BaseAppUninstalledJob
 {
@@ -31,7 +32,7 @@ class BaseUninstallJob extends BaseAppUninstalledJob
 
             $shop = $shopQuery->getByDomain($shopDomain);
 
-            $this->safelyNotifyAdmin($shop->name);
+            $this->safelyNotifyAdmin($shop);
             $this->safelyNotifyShopOwner($shop);
 
             parent::handle($shopCommand, $shopQuery, $cancelCurrentPlanAction);
@@ -44,22 +45,45 @@ class BaseUninstallJob extends BaseAppUninstalledJob
         }
     }
 
-    protected function safelyNotifyAdmin(string $shopDomain): void
+    protected function safelyNotifyAdmin($shop): void
     {
-        try {
-            $adminEmail = config('shopify-enhanced.admin_email');
+        $telegram = app(TelegramService::class);
 
-            if ($adminEmail && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-                // Mail::to($adminEmail)->send(new AdminUninstallNotification($shopDomain));
-                Mail::to($adminEmail)->send(app(AdminUninstallNotification::class, [
-                    'shopDomain' => $shopDomain,
-                ]));
-                \debug_log("Admin notified about uninstall for shop: {$shopDomain}");
-            } else {
-                Log::warning("Invalid or missing admin email. Notification not sent.");
+        if (!$telegram->isConfigured()) {
+            \debug_log("Telegram not configured. Skipping admin notification for shop: {$shop->name}");
+            return;
+        }
+
+        try {
+            $shopDomain = $shop->name ?? 'Unknown';
+
+            /** @var \App\Models\User $user */
+            $user = config('shopify-enhanced.user_model')::where('name', $shopDomain)->first();
+
+            if (!$user) {
+                \debug_log("User not found in database for shop: {$shopDomain}");
+                return;
             }
+
+            $hasActiveTrial = (bool) $user->charges()->where('trial_ends_on', '>', now())->first();
+            $trialStatus = $hasActiveTrial ? 'Running' : 'No charge found';
+
+            $message = $telegram->formatMessage([
+                'title' => '⚠️ App Uninstalled',
+                'lines' => [
+                    ['key' => 'Shop', 'value' => $shopDomain],
+                    ['key' => 'Owner Mail', 'value' => $user->owner_email ?? 'N/A'],
+                    ['key' => 'Plan', 'value' => $user->plan_id ?? 'N/A'],
+                    ['key' => 'Trial', 'value' => $trialStatus],
+                    ['key' => 'Installed', 'value' => $user->updated_at?->diffForHumans() ?? 'N/A'],
+                ],
+                'footer' => 'A customer has uninstalled your app.',
+            ]);
+
+            $telegram->send($message);
+            \debug_log("Admin notified via Telegram about uninstall for shop: {$shopDomain}");
         } catch (\Exception $e) {
-            Log::error("Failed to notify admin for {$shopDomain}: {$e->getMessage()}");
+            Log::error("Failed to notify admin for {$shop->name}: {$e->getMessage()}");
         }
     }
 

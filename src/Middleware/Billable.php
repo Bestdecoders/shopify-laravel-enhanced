@@ -21,8 +21,6 @@ class Billable
             return $next($request);
         }
 
-   
-
         if (Util::getShopifyConfig('billing_enabled') === true) {
             $shop = auth()->user();
             if (!$shop->plan && !$shop->isFreemium() && !$shop->isGrandfathered() && $request->ajax()) {
@@ -33,6 +31,7 @@ class Billable
                         'host' => $request->get('host'),
                     ])
                 );
+                debug_log($redirectUrl);
                 return response()->json(['forceRedirectUrl' => $redirectUrl], 403);
             }
         }
@@ -40,4 +39,3 @@ class Billable
         return $next($request);
     }
 }
-

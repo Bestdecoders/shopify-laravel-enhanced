@@ -12,6 +12,7 @@ use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\TestSubscriptionControl
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\SupportController;
 use Bestdecoders\ShopifyLaravelEnhanced\Http\Controllers\ProductFilterController;
 
+
 Route::middleware('web')->group(function () {
    
     // Bestdecoders Privacy Policy
@@ -42,6 +43,12 @@ Route::middleware('web')->group(function () {
         Route::get('/', [PricingController::class, 'index'])->name('index');
         Route::get('/plan/details', [PricingController::class, 'getPlanDetails'])->name('plan.details');
         Route::post('/subscription/url', [PricingController::class, 'getPlanSubscriptionUrl'])->name('subscription.url');
+    });
+
+    Route::middleware(['verify.shopify', 'enhancer.billable', 'enhancer.inject-billing', 'enhancer.extract-shop'])->group(function () {
+        Route::get('/redirect-pricing', function () {
+            return 'done';
+        })->name('billable-redirect');
     });
 
     // Support Routes
@@ -149,4 +156,10 @@ Route::middleware('web')->group(function () {
         Route::post('customers/redact', [WebhookController::class, 'customerDataErasure'])->name('customers.redact');
         Route::post('shop/redact', [WebhookController::class, 'shopDataErasure'])->name('shop.redact');
     });
+
+    // ===========================================
+    // TELEGRAM WEBHOOK ROUTE
+    // ===========================================
+
+    Route::post('telegram/webhook', [\Bestdecoders\ShopifyLaravelEnhanced\Services\TelegramWebhookHandler::class, 'handle'])->name('telegram.webhook');
 });

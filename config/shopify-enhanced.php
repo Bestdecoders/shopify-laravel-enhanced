@@ -110,6 +110,25 @@ return [
             'delay_seconds' => env('WEBHOOK_RETRY_DELAY', 60),
         ],
     ],
+
+    // ===========================================
+    // TELEGRAM CONFIGURATION
+    // ===========================================
+
+    'telegram' => [
+        'enabled' => env('TELEGRAM_ENABLED', false),
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+
+        // Telegram webhook URL (automatically generated)
+        'webhook_url' => env('TELEGRAM_WEBHOOK_URL'),
+
+        // Telegram commands mapping
+        'commands' => [
+            // Example: 'start' => \App\Telegram\Commands\StartCommand::class,
+        ],
+    ],
+
     'queries' => [
         'shop' => <<<GRAPHQL
             query {
