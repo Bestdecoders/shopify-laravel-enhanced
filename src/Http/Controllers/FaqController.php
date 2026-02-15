@@ -26,11 +26,7 @@ class FaqController extends Controller
             return $this->getFaqs($request);
         }
 
-        return inertia('Faq', [
-            'initialFaqs' => $this->loadFaqData(true), // Only published FAQs for initial load
-            'categories' => $this->getCategories(),
-            'tags' => $this->getAllTags()
-        ]);
+        return view('shopify-enhanced::faq');
     }
 
     /**

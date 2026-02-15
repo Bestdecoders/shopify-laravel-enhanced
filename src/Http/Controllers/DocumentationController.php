@@ -25,11 +25,8 @@ class DocumentationController extends Controller
     public function index()
     {
         $docsIndex = $this->loadDocsIndex();
-        
-        return inertia('Documentation', [
-            'docs' => $docsIndex,
-            'categories' => $this->getCategories($docsIndex)
-        ]);
+
+        return view('shopify-enhanced::documentation');
     }
 
     /**

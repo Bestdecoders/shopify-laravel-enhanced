@@ -347,6 +347,7 @@ class SubscriptionManagementService
             }
 
             $coupon->use();
+            $coupon->recordUsage($user);
 
             return true;
 

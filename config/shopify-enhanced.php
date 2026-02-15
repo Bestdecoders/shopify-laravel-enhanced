@@ -127,7 +127,14 @@ return [
         'commands' => [
             // AI Chat Command - Chat with AI assistant
             'ai' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\AiChatCommand::class,
+
+            // Discount Command - Manage discount coupons
+            'discount' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\DiscountCommand::class,
+
+            // Help Command - Show available commands and their usage
+            'help' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\HelpCommand::class,
         ],
+        
     ],
 
     // ===========================================

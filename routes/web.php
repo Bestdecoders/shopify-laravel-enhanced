@@ -18,6 +18,16 @@ Route::middleware('web')->group(function () {
     // Bestdecoders Privacy Policy
     Route::get('/privacy', [HomeController::class, 'privacy'])->name('bestdecoders.privacy');
 
+    // Bestdecoders FAQ Page
+    Route::get('/faq', [FaqController::class, 'index'])->name('bestdecoders.faq');
+
+    // Bestdecoders Documentation Page
+    Route::get('/docs', [DocumentationController::class, 'index'])->name('bestdecoders.docs');
+
+    // Public API routes for FAQ and Documentation (without Shopify verification)
+    Route::get('/api/faq-data', [FaqController::class, 'getFaqs'])->name('public.faq.api');
+    Route::get('/api/doc-data/{slug}', [DocumentationController::class, 'getDocument'])->where('slug', '.*')->name('public.docs.api');
+
     Route::get('shopify-enhanced/test', [ShopifyController::class, 'test'])->name('shopify-enhanced.test');
     Route::get('shopify-enhanced/shop-info/{shop}', [ShopifyController::class, 'getShopInfo']);
     Route::post('shopify-enhanced/send-thanks-email/{shop}', [ShopifyController::class, 'sendThanksEmail']);
@@ -31,6 +41,7 @@ Route::middleware('web')->group(function () {
     });
 
     // Documentation Routes
+    
     Route::prefix('docs')->name('docs.')->middleware(['verify.shopify', 'enhancer.extract-shop'])->group(function () {
         Route::get('/', [DocumentationController::class, 'index'])->name('index');
         Route::get('/search', [DocumentationController::class, 'search'])->name('search');

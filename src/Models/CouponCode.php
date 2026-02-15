@@ -5,6 +5,7 @@ namespace Bestdecoders\ShopifyLaravelEnhanced\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Osiset\ShopifyApp\Storage\Models\Charge;
 use Carbon\Carbon;
 
 class CouponCode extends Model
@@ -39,9 +40,9 @@ class CouponCode extends Model
     const TYPE_FIXED = 'fixed';
     const TYPE_FREE_DAYS = 'free_days';
 
-    public function subscriptions(): HasMany
+    public function charges(): HasMany
     {
-        return $this->hasMany(UserSubscription::class, 'coupon_code', 'code');
+        return $this->hasMany(Charge::class, 'coupon_code', 'code');
     }
 
     public function isValid(): bool
@@ -68,7 +69,7 @@ class CouponCode extends Model
         }
 
         // Check if user has already used this coupon
-        if ($this->subscriptions()->where('user_id', $user->id)->exists()) {
+        if ($this->isUsedBy($user)) {
             return false;
         }
 
@@ -80,9 +81,30 @@ class CouponCode extends Model
         return true;
     }
 
+    public function isUsedBy($user): bool
+    {
+        return $this->users()->where('user_id', $user->id)->exists();
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(
+            config('shopify-enhanced.user_model', \App\Models\User::class),
+            'coupon_user_usage',
+            'coupon_code_id',
+            'user_id'
+        );
+    }
+
     public function use(): void
     {
         $this->increment('used_count');
+    }
+
+    public function recordUsage($user): void
+    {
+        // Record that this user has used this coupon
+        $this->users()->attach($user->id);
     }
 
     public function getDiscountAmount(float $baseAmount): float

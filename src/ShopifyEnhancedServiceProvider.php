@@ -29,6 +29,11 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         // Load Package Migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        // Publish Migrations (for users who want to customize them)
+        $this->publishes([
+            __DIR__ . '/../database/migrations/' => database_path('migrations'),
+        ], ['default', 'shopify-enhanced-migrations']);
+
         // listen to the ShopAuthenticatedEvent
         // if (config('shopify-enhanced.auto_register_install_job', true)) {
         //     Event::listen(
@@ -67,6 +72,22 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/shopify-enhanced.php' => config_path('shopify-enhanced.php'),
         ], ['default', 'shopify-enhanced-config']);
+
+        // Publish Views (FAQ and Documentation pages)
+        $this->publishes([
+            __DIR__ . '/../resources/views/faq.blade.php' => resource_path('views/faq.blade.php'),
+            __DIR__ . '/../resources/views/documentation.blade.php' => resource_path('views/documentation.blade.php'),
+        ], ['default', 'shopify-enhanced-views']);
+
+        // Publish FAQ Resources
+        $this->publishes([
+            __DIR__ . '/../../storage/faq.json' => storage_path('app/faq.json'),
+        ], ['default', 'shopify-enhanced-faq']);
+
+        // Publish Documentation Resources
+        $this->publishes([
+            __DIR__ . '/../../storage/docs' => storage_path('app/docs'),
+        ], ['default', 'shopify-enhanced-docs']);
 
         // Publish Email Templates (required by Mail classes)
         $this->publishes([
