@@ -32,17 +32,17 @@ Route::middleware('web')->group(function () {
     Route::get('shopify-enhanced/shop-info/{shop}', [ShopifyController::class, 'getShopInfo']);
     Route::post('shopify-enhanced/send-thanks-email/{shop}', [ShopifyController::class, 'sendThanksEmail']);
 
-    // FAQ Routes
-    Route::prefix('faq')->name('faq.')->middleware(['verify.shopify', 'enhancer.extract-shop'])->group(function () {
+    // FAQ Routes (Shopify authenticated)
+    Route::prefix('shop/faq')->name('faq.')->middleware(['verify.shopify', 'enhancer.extract-shop'])->group(function () {
         Route::get('/', [FaqController::class, 'index'])->name('index');
         Route::get('/search', [FaqController::class, 'search'])->name('search');
         Route::get('/api/faqs', [FaqController::class, 'getFaqs'])->name('api.faqs');
         Route::get('/{id}', [FaqController::class, 'show'])->name('show');
     });
 
-    // Documentation Routes
-    
-    Route::prefix('docs')->name('docs.')->middleware(['verify.shopify', 'enhancer.extract-shop'])->group(function () {
+    // Documentation Routes (Shopify authenticated)
+
+    Route::prefix('shop/docs')->name('docs.')->middleware(['verify.shopify', 'enhancer.extract-shop'])->group(function () {
         Route::get('/', [DocumentationController::class, 'index'])->name('index');
         Route::get('/search', [DocumentationController::class, 'search'])->name('search');
         Route::get('/api/{slug}', [DocumentationController::class, 'getDocument'])->name('api.doc');
