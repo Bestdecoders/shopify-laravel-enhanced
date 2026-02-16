@@ -24,9 +24,11 @@ class DocumentationController extends Controller
      */
     public function index()
     {
-        $docsIndex = $this->loadDocsIndex();
+        $docsIndex = $this->loadDocsIndexStructured();
 
-        return view('shopify-enhanced::documentation');
+        return view('shopify-enhanced::docs', [
+            'docsIndex' => $docsIndex,
+        ]);
     }
 
     /**
@@ -34,15 +36,16 @@ class DocumentationController extends Controller
      */
     public function show($slug)
     {
-        $docsIndex = $this->loadDocsIndex();
-        $doc = collect($docsIndex)->firstWhere('id', $slug);
+        $docsIndex = $this->loadDocsIndexStructured();
+        $flatDocsIndex = $this->loadDocsIndex();
+        $doc = collect($flatDocsIndex)->firstWhere('id', $slug);
 
         if (!$doc) {
             abort(404, 'Documentation not found');
         }
 
         $filePath = $this->docsPath . '/' . $doc['file'];
-        
+
         if (!File::exists($filePath)) {
             throw new \Exception('Documentation file not found. Please publish documentation assets using: php artisan vendor:publish --tag=shopify-enhanced-docs');
         }
@@ -52,12 +55,12 @@ class DocumentationController extends Controller
         // Extract table of contents from markdown headers
         $toc = $this->extractTableOfContents($content);
 
-        return inertia('Documentation', [
-            'docs' => $docsIndex,
-            'categories' => $this->getCategories($docsIndex),
-            'initialDoc' => $doc,
-            'initialContent' => $content,
-            'initialToc' => $toc
+        // Return the documentation view with data for JavaScript
+        return view('shopify-enhanced::docs', [
+            'docsIndex' => $docsIndex,
+            'currentDoc' => $doc,
+            'currentContent' => $content,
+            'currentToc' => $toc
         ]);
     }
 
@@ -152,7 +155,7 @@ class DocumentationController extends Controller
         }
 
         $data = json_decode(File::get($this->docsIndexPath), true);
-        
+
         if (!$data) {
             throw new \Exception('Invalid documentation index file. Please republish documentation assets.');
         }
@@ -167,6 +170,36 @@ class DocumentationController extends Controller
         });
 
         return $publishedDocs;
+    }
+
+    /**
+     * Load documentation index structured by sections
+     */
+    private function loadDocsIndexStructured()
+    {
+        $docs = $this->loadDocsIndex();
+
+        // Group docs by category as sections
+        $sections = [];
+        foreach ($docs as $doc) {
+            $category = $doc['category'] ?? 'General';
+
+            if (!isset($sections[$category])) {
+                $sections[$category] = [
+                    'title' => $category,
+                    'pages' => [],
+                ];
+            }
+
+            $sections[$category]['pages'][] = [
+                'title' => $doc['title'],
+                'slug' => $doc['id'],
+                'description' => $doc['description'] ?? '',
+            ];
+        }
+
+        // Convert to indexed array
+        return array_values($sections);
     }
 
     /**

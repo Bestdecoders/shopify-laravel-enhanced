@@ -23,6 +23,7 @@ Route::middleware('web')->group(function () {
 
     // Bestdecoders Documentation Page
     Route::get('/docs', [DocumentationController::class, 'index'])->name('bestdecoders.docs');
+    Route::get('/docs/{slug}', [DocumentationController::class, 'show'])->name('bestdecoders.docs.show');
 
     // Public API routes for FAQ and Documentation (without Shopify verification)
     Route::get('/api/faq-data', [FaqController::class, 'getFaqs'])->name('public.faq.api');

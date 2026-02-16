@@ -76,7 +76,7 @@ class ShopifyEnhancedServiceProvider extends ServiceProvider
         // Publish Views (FAQ and Documentation pages)
         $this->publishes([
             __DIR__ . '/../resources/views/faq.blade.php' => resource_path('views/faq.blade.php'),
-            __DIR__ . '/../resources/views/documentation.blade.php' => resource_path('views/documentation.blade.php'),
+            __DIR__ . '/../resources/views/docs.blade.php' => resource_path('views/docs.blade.php'),
         ], ['default', 'shopify-enhanced-views']);
 
         // Publish FAQ Resources

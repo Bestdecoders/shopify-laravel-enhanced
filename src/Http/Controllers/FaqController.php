@@ -26,7 +26,13 @@ class FaqController extends Controller
             return $this->getFaqs($request);
         }
 
-        return view('shopify-enhanced::faq');
+        $faqs = $this->loadFaqData(true);
+        $categories = $this->getCategories();
+
+        return view('shopify-enhanced::faq', [
+            'faqs' => $faqs,
+            'categories' => $categories,
+        ]);
     }
 
     /**

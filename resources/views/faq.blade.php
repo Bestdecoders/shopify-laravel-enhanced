@@ -4,317 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ - Shopify Laravel Enhanced</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-            background-color: #f8f9fa;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #007cba;
-        }
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .filter-select {
-            flex: 1;
-            min-width: 150px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .faq-category {
-            margin-bottom: 30px;
-        }
-        .faq-category-header {
-            background-color: #007cba;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-category-content {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
-            padding: 15px;
-            display: none;
-        }
-        .faq-category-content.open {
-            display: block;
-        }
-        .faq-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            background-color: #fafafa;
-        }
-        .faq-question {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            color: #333;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-answer {
-            color: #666;
-            padding-top: 10px;
-            display: none;
-        }
-        .faq-answer.open {
-            display: block;
-        }
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-style: italic;
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #007cba;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .back-link:hover {
-            background-color: #005a87;
-        }
-        .expand-collapse-all {
-            text-align: right;
-            margin-bottom: 10px;
-        }
-        .expand-collapse-btn {
-            background: none;
-            border: none;
-            color: #007cba;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: 0.9em;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="header">
-        <h1>Frequently Asked Questions</h1>
-        <p>Find answers to common questions about Shopify Laravel Enhanced</p>
-    </div>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <a href="{{ url('/') }}" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-2 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900">Frequently Asked Questions</h1>
+            <p class="text-gray-600 mt-2">Find answers to common questions about Shopify Laravel Enhanced.</p>
+        </div>
+    </header>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Search FAQs...">
-    
-    <div class="filters">
-        <select id="categoryFilter" class="filter-select">
-            <option value="">All Categories</option>
-            <!-- Categories will be populated by JavaScript -->
-        </select>
-        <select id="tagFilter" class="filter-select">
-            <option value="">All Tags</option>
-            <!-- Tags will be populated by JavaScript -->
-        </select>
-    </div>
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Category Filter -->
+        @if(isset($categories) && count($categories) > 1)
+        <div class="mb-6">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterByCategory('all')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition" data-category="all">
+                    All
+                </button>
+                @foreach($categories as $category)
+                <button onclick="filterByCategory('{{ $category }}')" class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 transition" data-category="{{ $category }}">
+                    {{ $category }}
+                </button>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
-    <div id="faq-container">
-        <!-- FAQ items will be populated by JavaScript -->
-    </div>
+        <!-- FAQ List -->
+        <div class="space-y-4">
+            @forelse(isset($faqs) ? $faqs : [] as $faq)
+            <div class="faq-item bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" data-category="{{ $faq['category'] ?? 'General' }}">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition">
+                    <span class="font-medium text-gray-900 pr-4">{{ $faq['question'] ?? '' }}</span>
+                    <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-content hidden px-6 pb-4">
+                    <div class="text-gray-600 leading-relaxed">
+                        {!! $faq['answer'] ?? '' !!}
+                    </div>
+                    @if(isset($faq['tags']) && !empty($faq['tags']))
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        @foreach($faq['tags'] as $tag)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {{ $tag }}
+                        </span>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No FAQs found</h3>
+                <p class="text-gray-600">Check back later for updates.</p>
+            </div>
+            @endforelse
+        </div>
 
-    <a href="{{ url('/') }}" class="back-link">← Back to Home</a>
+        <!-- Link to Documentation -->
+        <div class="mt-12 bg-indigo-50 rounded-lg p-6 text-center">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Need more help?</h3>
+            <p class="text-gray-600 mb-4">Check out our comprehensive documentation for detailed guides.</p>
+            <a href="{{ url('/docs') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition">
+                View Documentation
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <p class="text-center text-gray-500 text-sm">
+                &copy; {{ date('Y') }} Shopify Laravel Enhanced. All rights reserved.
+            </p>
+        </div>
+    </footer>
 
     <script>
-        let allFaqs = [];
-        let categories = [];
-        let tags = [];
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('svg');
 
-        // Fetch FAQ data from the API endpoint
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch(window.location.origin + '/api/faq-data')
-                .then(response => response.json())
-                .then(data => {
-                    allFaqs = data.faqs || [];
-                    categories = data.categories || [];
-                    tags = data.tags || [];
-                    
-                    populateFilters();
-                    displayFaqs(allFaqs);
-                })
-                .catch(error => {
-                    console.error('Error fetching FAQs:', error);
-                    document.getElementById('faq-container').innerHTML = '<div class="no-results">Error loading FAQs. Please try again later.</div>';
-                });
-        });
-
-        function populateFilters() {
-            const categorySelect = document.getElementById('categoryFilter');
-            const tagSelect = document.getElementById('tagFilter');
-            
-            // Populate categories
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                categorySelect.appendChild(option);
-            });
-            
-            // Populate tags
-            tags.forEach(tag => {
-                const option = document.createElement('option');
-                option.value = tag;
-                option.textContent = tag;
-                tagSelect.appendChild(option);
-            });
-            
-            // Add event listeners to filters
-            document.getElementById('searchInput').addEventListener('input', filterFaqs);
-            document.getElementById('categoryFilter').addEventListener('change', filterFaqs);
-            document.getElementById('tagFilter').addEventListener('change', filterFaqs);
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
         }
 
-        function filterFaqs() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const selectedCategory = document.getElementById('categoryFilter').value;
-            const selectedTag = document.getElementById('tagFilter').value;
-            
-            let filteredFaqs = allFaqs.filter(faq => {
-                const matchesSearch = !searchTerm || 
-                    faq.question.toLowerCase().includes(searchTerm) || 
-                    faq.answer.toLowerCase().includes(searchTerm) ||
-                    faq.tags.some(tag => tag.toLowerCase().includes(searchTerm));
-                
-                const matchesCategory = !selectedCategory || faq.category === selectedCategory;
-                const matchesTag = !selectedTag || faq.tags.includes(selectedTag);
-                
-                return matchesSearch && matchesCategory && matchesTag;
-            });
-            
-            displayFaqs(filteredFaqs);
-        }
-
-        function displayFaqs(faqs) {
-            const container = document.getElementById('faq-container');
-            
-            if (faqs.length === 0) {
-                container.innerHTML = '<div class="no-results">No FAQs match your search criteria.</div>';
-                return;
-            }
-            
-            // Group FAQs by category
-            const groupedFaqs = {};
-            faqs.forEach(faq => {
-                const category = faq.category || 'Uncategorized';
-                if (!groupedFaqs[category]) {
-                    groupedFaqs[category] = [];
-                }
-                groupedFaqs[category].push(faq);
-            });
-            
-            let html = '';
-            
-            Object.keys(groupedFaqs).forEach(category => {
-                html += `
-                    <div class="faq-category">
-                        <div class="faq-category-header" onclick="toggleCategory('${category}')">
-                            <span>${category}</span>
-                            <span>▼</span>
-                        </div>
-                        <div class="faq-category-content" id="category-${category}">
-                            <div class="expand-collapse-all">
-                                <button class="expand-collapse-btn" onclick="toggleAllInCategory('${category}', true)">Expand All</button>
-                                <button class="expand-collapse-btn" onclick="toggleAllInCategory('${category}', false)">Collapse All</button>
-                            </div>
-                `;
-                
-                groupedFaqs[category].forEach((faq, index) => {
-                    html += `
-                        <div class="faq-item">
-                            <div class="faq-question" onclick="toggleAnswer(this)">
-                                <span>${faq.question}</span>
-                                <span>+</span>
-                            </div>
-                            <div class="faq-answer" id="answer-${faq.id || index}">
-                                ${faq.answer}
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                html += `
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function toggleCategory(categoryId) {
-            const content = document.getElementById(`category-${categoryId}`);
-            const header = content.previousElementSibling;
-            const icon = header.querySelector('span:last-child');
-            
-            if (content.classList.contains('open')) {
-                content.classList.remove('open');
-                icon.textContent = '▼';
-            } else {
-                content.classList.add('open');
-                icon.textContent = '▲';
-            }
-        }
-
-        function toggleAnswer(element) {
-            const answer = element.nextElementSibling;
-            const icon = element.querySelector('span:last-child');
-            
-            if (answer.classList.contains('open')) {
-                answer.classList.remove('open');
-                icon.textContent = '+';
-            } else {
-                answer.classList.add('open');
-                icon.textContent = '−';
-            }
-        }
-
-        function toggleAllInCategory(categoryId, expand) {
-            const categoryContent = document.getElementById(`category-${categoryId}`);
-            const answers = categoryContent.querySelectorAll('.faq-answer');
-            const icons = categoryContent.querySelectorAll('.faq-question span:last-child');
-            
-            answers.forEach((answer, index) => {
-                if (expand) {
-                    answer.classList.add('open');
-                    icons[index].textContent = '−';
+        function filterByCategory(category) {
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.remove('bg-gray-200', 'text-gray-700');
+                    btn.classList.add('bg-indigo-600', 'text-white');
                 } else {
-                    answer.classList.remove('open');
-                    icons[index].textContent = '+';
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                }
+            });
+
+            // Filter FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
                 }
             });
         }
+
+        // Open FAQ from URL hash
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                const faqId = hash.substring(1);
+                const faqItem = document.querySelector(`[data-id="${faqId}"]`);
+                if (faqItem) {
+                    const button = faqItem.querySelector('button');
+                    toggleFaq(button);
+                    faqItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
     </script>
 </body>
 </html>
