@@ -8,7 +8,9 @@ import { InertiaProgress } from '@inertiajs/progress';
 import "@shopify/polaris/build/esm/styles.css";
 import createApp from '@shopify/app-bridge';
 import { NavigationMenu, AppLink } from '@shopify/app-bridge/actions';
-import TawkTo from './components/TawkTo';
+// TawkTo commented out for BFS compliance (3.1.1 - no external embedded content)
+// Uncomment if you want to enable the chat widget
+// import TawkTo from './components/TawkTo';
 
 InertiaProgress.init();
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
@@ -32,7 +34,7 @@ const aboutLink = AppLink.create(shopifyApp, {
 
 const settingsLink = AppLink.create(shopifyApp, {
     label: "Settings",
-    destination: `/setup?host=${currentHost}`,
+    destination: `/settings?host=${currentHost}`,
     destinationType: "app",
 });
 
@@ -52,7 +54,8 @@ createInertiaApp({
         const root = createRoot(el);
         root.render(
             <AppProvider i18n={translations}>
-                <TawkTo />
+                {/* TawkTo commented out for BFS compliance (3.1.1 - no external embedded content) */}
+                {/* <TawkTo /> */}
                 <App {...props} />
             </AppProvider>
         );
