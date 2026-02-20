@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Page, BlockStack, InlineStack, Card, Text, Badge, InlineGrid, Banner } from '@shopify/polaris';
-
+import { useAxios } from "../hooks/useAxios";
 const Home = () => {
     const [bannerVisible, setBannerVisible] = useState(true);
-
+  // Auto-check billing on mount
+    const axios = useAxios();
+    useEffect(() => {
+        checkBilling();
+        console.log('changed');
+        
+    }, []);
+   const checkBilling =  async () => {
+       await axios.get("/redirect-pricing").then((response) => {
+            console.log(response);
+        });
+    }
     return (
         <Page title="Dashboard">
             <BlockStack gap="400">

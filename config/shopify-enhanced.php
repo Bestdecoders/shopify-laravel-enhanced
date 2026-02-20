@@ -129,7 +129,10 @@ return [
             'ai' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\AiChatCommand::class,
 
             // Discount Command - Manage discount coupons
-            'discount' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\DiscountCommand::class,
+            //'discount' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\DiscountCommand::class,
+
+            // Grandfathered Access Command - Manage grandfathered shop access
+            'gf' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\GrandfatherCommand::class,
 
             // Help Command - Show available commands and their usage
             'help' => \Bestdecoders\ShopifyLaravelEnhanced\Telegram\Commands\HelpCommand::class,
@@ -372,6 +375,190 @@ return [
                                 updatedAt
                                 productsCount
                             }
+                        }
+                    }
+                }
+            GRAPHQL,
+        ],
+
+        // ===========================================
+        // APP SUBSCRIPTION MUTATIONS
+        // ===========================================
+        'app_subscription' => [
+            // Create a one-time app purchase
+            'create_purchase_one_time' => <<<GRAPHQL
+                mutation appPurchaseOneTimeCreate(\$name: String!, \$lineItems: [AppPurchaseOneTimeLineItemInput!]!, \$returnUrl: URL!, \$test: Boolean) {
+                    appPurchaseOneTimeCreate(
+                        name: \$name
+                        lineItems: \$lineItems
+                        returnUrl: \$returnUrl
+                        test: \$test
+                    ) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        confirmationUrl
+                        appPurchaseOneTime {
+                            id
+                            name
+                            status
+                            test
+                            createdAt
+                            updatedAt
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            // Create a recurring app subscription
+            'create' => <<<GRAPHQL
+                mutation appSubscriptionCreate(\$name: String!, \$lineItems: [AppSubscriptionLineItemInput!]!, \$returnUrl: URL!, \$test: Boolean, \$trialDays: Int) {
+                    appSubscriptionCreate(
+                        name: \$name
+                        lineItems: \$lineItems
+                        returnUrl: \$returnUrl
+                        test: \$test
+                        trialDays: \$trialDays
+                    ) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        confirmationUrl
+                        appSubscription {
+                            id
+                            name
+                            status
+                            lineItems {
+                                id
+                                plan {
+                                    pricingDetails {
+                                        ... on AppRecurringPricing {
+                                            __typename
+                                            price {
+                                                amount
+                                                currencyCode
+                                            }
+                                            interval
+                                            discount {
+                                                value {
+                                                    amount
+                                                    percentage
+                                                }
+                                                durationLimitInIntervals
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            test
+                            trialDays
+                            createdAt
+                            updatedAt
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            // Cancel an app subscription
+            'cancel' => <<<GRAPHQL
+                mutation appSubscriptionCancel(\$id: ID!) {
+                    appSubscriptionCancel(id: \$id) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        appSubscription {
+                            id
+                            status
+                            name
+                            test
+                            createdAt
+                            updatedAt
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            // Update subscription line item
+            'update_line_item' => <<<GRAPHQL
+                mutation appSubscriptionLineItemUpdate(\$id: ID!, \$lineItems: [AppSubscriptionLineItemInput!]!) {
+                    appSubscriptionLineItemUpdate(id: \$id, lineItems: \$lineItems) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        appSubscription {
+                            id
+                            name
+                            status
+                            lineItems {
+                                id
+                                plan {
+                                    pricingDetails {
+                                        ... on AppRecurringPricing {
+                                            __typename
+                                            price {
+                                                amount
+                                                currencyCode
+                                            }
+                                            interval
+                                            discount {
+                                                value {
+                                                    amount
+                                                    percentage
+                                                }
+                                                durationLimitInIntervals
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            // Extend trial period
+            'extend_trial' => <<<GRAPHQL
+                mutation appSubscriptionTrialExtend(\$id: ID!, \$trialDays: Int!) {
+                    appSubscriptionTrialExtend(id: \$id, trialDays: \$trialDays) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        appSubscription {
+                            id
+                            name
+                            test
+                            trialDays
+                            updatedAt
+                        }
+                    }
+                }
+            GRAPHQL,
+
+            // Create usage record (for usage-based billing)
+            'create_usage_record' => <<<GRAPHQL
+                mutation appUsageRecordCreate(\$subscriptionLineItemId: ID!, \$price: MoneyInput!, \$description: String!) {
+                    appUsageRecordCreate(
+                        subscriptionLineItemId: \$subscriptionLineItemId
+                        price: \$price
+                        description: \$description
+                    ) {
+                        userErrors {
+                            field
+                            message
+                        }
+                        appUsageRecord {
+                            id
+                            description
+                            price {
+                                amount
+                                currencyCode
+                            }
+                            createdAt
                         }
                     }
                 }

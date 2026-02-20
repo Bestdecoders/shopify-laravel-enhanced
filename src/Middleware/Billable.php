@@ -12,6 +12,7 @@ class Billable
 {
     public function handle(Request $request, Closure $next): Response
     {
+        debug_log('appeared');
         if (!Util::getShopifyConfig('billing_enabled')) {
             return $next($request);
         }
@@ -28,7 +29,7 @@ class Billable
                     Util::getShopifyConfig('route_names.billing'),
                     array_merge($request->input(), [
                         'shop' => $shop->getDomain()->toNative(),
-                        'host' => $request->get('host'),
+                        'host' => $request->input('host'),
                     ])
                 );
                 debug_log($redirectUrl);

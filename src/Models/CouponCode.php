@@ -123,4 +123,24 @@ class CouponCode extends Model
     {
         return $this->type === self::TYPE_FREE_DAYS ? (int) $this->value : 0;
     }
+
+    /**
+     * Set the duration limit for the discount (in billing cycles)
+     * @param int|null $cycles Number of billing cycles, or null for unlimited
+     */
+    public function setDurationLimit(?int $cycles): void
+    {
+        $metadata = $this->metadata ?? [];
+        $metadata['duration_limit'] = $cycles;
+        $this->metadata = $metadata;
+    }
+
+    /**
+     * Get the duration limit for the discount
+     * @return int|null Number of billing cycles, or null if unlimited
+     */
+    public function getDurationLimit(): ?int
+    {
+        return $this->metadata['duration_limit'] ?? null;
+    }
 }

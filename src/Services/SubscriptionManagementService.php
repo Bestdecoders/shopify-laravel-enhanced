@@ -17,87 +17,30 @@ class SubscriptionManagementService
     }
 
     /**
-     * Cancel a user's Shopify subscription using GraphQL
-     */
-    public function cancelSubscription($user, ?string $reason = null): bool
-    {
-        try {
-            // Get the active charge from the charges table
-            $activeCharge = $user->charges()
-                ->where('status', 'active')
-                ->whereNull('cancelled_on')
-                ->latest()
-                ->first();
-
-            if (!$activeCharge) {
-                Log::warning('No active charge found for user cancellation', [
-                    'user_id' => $user->id
-                ]);
-                return false;
-            }
-
-            // Use GraphQL to cancel the subscription
-            $query = config('shopify-enhanced-graphql-queries.billing.cancel_subscription');
-            $shopifySubscriptionId = "gid://shopify/AppSubscription/{$activeCharge->charge_id}";
-            
-            $result = $this->graphqlService->execute($user, $query, [
-                'id' => $shopifySubscriptionId
-            ]);
-
-            if (isset($result['appSubscriptionCancel']['appSubscription']['status'])) {
-                // Update the charge record
-                $activeCharge->update([
-                    'status' => 'cancelled',
-                    'cancelled_on' => now(),
-                    'cancellation_reason' => $reason
-                ]);
-
-                debug_log('Subscription cancelled via GraphQL', [
-                    'user_id' => $user->id,
-                    'charge_id' => $activeCharge->id,
-                    'shopify_subscription_id' => $shopifySubscriptionId,
-                    'reason' => $reason
-                ]);
-
-                return true;
-            }
-
-            return false;
-
-        } catch (Exception $e) {
-            Log::error('Failed to cancel subscription via GraphQL', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage()
-            ]);
-            return false;
-        }
-    }
-
-    /**
-     * Create a new subscription using GraphQL
+     * Create a new subscription using GraphQL with discount support
      */
     public function createSubscription($user, string $planType = 'monthly', int $trialDays = 0, ?string $couponCode = null): ?string
     {
         try {
             $planDetails = $this->getPlanDetails($planType);
-            
+
             if (!$planDetails) {
-                Log::error('Invalid subscription type for GraphQL creation', [
-                    'plan_type' => $planType
-                ]);
+                Log::error('Invalid subscription type', ['plan_type' => $planType]);
                 return null;
             }
 
             $basePrice = $planDetails['price'];
-            $effectivePrice = $this->calculateEffectivePrice($basePrice, $couponCode);
             $returnUrl = config('app.url') . '/billing/callback?charge_id=';
 
-            // Prepare line items for GraphQL
+            // Build discount structure from coupon
+            $discount = $this->buildDiscountFromCoupon($couponCode);
+
+            // Prepare line items with ORIGINAL price (not discounted)
             $lineItems = [[
                 'plan' => [
                     'appRecurringPricingDetails' => [
                         'price' => [
-                            'amount' => $effectivePrice,
+                            'amount' => $basePrice,
                             'currencyCode' => 'USD'
                         ],
                         'interval' => $planDetails['interval']
@@ -105,8 +48,14 @@ class SubscriptionManagementService
                 ]
             ]];
 
-            $query = config('shopify-enhanced-graphql-queries.billing.create_recurring_charge');
-            
+            // Add discount if coupon exists
+            if ($discount) {
+                $lineItems[0]['plan']['appRecurringPricingDetails']['discount'] = $discount;
+            }
+
+            // Get query from config: shopify-enhanced.queries.app_subscription.create
+            $query = config('shopify-enhanced.queries.app_subscription.create');
+
             $result = $this->graphqlService->execute($user, $query, [
                 'lineItems' => $lineItems,
                 'name' => $planDetails['name'],
@@ -122,13 +71,13 @@ class SubscriptionManagementService
                 // Extract numeric ID for our database
                 $numericId = str_replace('gid://shopify/AppSubscription/', '', $shopifySubscriptionId);
 
-                // Create charge record in the charges table (Kyon package)
+                // Create charge record
                 $charge = new Charge();
                 $charge->user_id = $user->id;
                 $charge->charge_id = $numericId;
                 $charge->type = 'recurring';
                 $charge->status = 'pending';
-                $charge->price = $effectivePrice;
+                $charge->price = $basePrice;
                 $charge->interval = $planDetails['interval'];
                 $charge->name = $planDetails['name'];
                 $charge->test = config('shopify-app.billing_test', true);
@@ -136,11 +85,13 @@ class SubscriptionManagementService
                 $charge->coupon_code = $couponCode;
                 $charge->save();
 
-                debug_log('Subscription created via GraphQL', [
+                debug_log('Subscription created', [
                     'user_id' => $user->id,
                     'charge_id' => $charge->id,
                     'shopify_subscription_id' => $shopifySubscriptionId,
-                    'confirmation_url' => $confirmationUrl
+                    'base_price' => $basePrice,
+                    'discount_applied' => $discount !== null,
+                    'coupon_code' => $couponCode
                 ]);
 
                 return $confirmationUrl;
@@ -149,7 +100,7 @@ class SubscriptionManagementService
             return null;
 
         } catch (Exception $e) {
-            Log::error('Failed to create subscription via GraphQL', [
+            Log::error('Failed to create subscription', [
                 'user_id' => $user->id,
                 'plan_type' => $planType,
                 'error' => $e->getMessage()
@@ -159,99 +110,54 @@ class SubscriptionManagementService
     }
 
     /**
-     * Get active subscriptions for a user using GraphQL
+     * Cancel a user's Shopify subscription using GraphQL
      */
-    public function getActiveSubscriptions($user): array
+    public function cancelSubscription($user, ?string $reason = null): bool
     {
         try {
-            $query = config('shopify-enhanced-graphql-queries.billing.get_app_subscriptions');
-            
-            $result = $this->graphqlService->execute($user, $query);
-
-            if (isset($result['currentAppInstallation']['activeSubscriptions'])) {
-                return $result['currentAppInstallation']['activeSubscriptions'];
-            }
-
-            return [];
-
-        } catch (Exception $e) {
-            Log::error('Failed to get active subscriptions via GraphQL', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage()
-            ]);
-            return [];
-        }
-    }
-
-    /**
-     * Check if user has active billing via GraphQL
-     */
-    public function hasActiveBilling($user): bool
-    {
-        try {
-            // First check charges table
-            $hasActiveCharge = $user->charges()
+            $activeCharge = $user->charges()
                 ->where('status', 'active')
                 ->whereNull('cancelled_on')
-                ->exists();
+                ->latest()
+                ->first();
 
-            if ($hasActiveCharge) {
-                return true;
+            if (!$activeCharge) {
+                Log::warning('No active charge found for cancellation', ['user_id' => $user->id]);
+                return false;
             }
 
-            // Double-check with GraphQL
-            $activeSubscriptions = $this->getActiveSubscriptions($user);
-            return count($activeSubscriptions) > 0;
+            // Get query from config: shopify-enhanced.queries.app_subscription.cancel
+            $query = config('shopify-enhanced.queries.app_subscription.cancel');
+            $shopifySubscriptionId = "gid://shopify/AppSubscription/{$activeCharge->charge_id}";
 
-        } catch (Exception $e) {
-            Log::error('Failed to check active billing via GraphQL', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage()
-            ]);
-            return false;
-        }
-    }
-
-    /**
-     * Sync charge status with Shopify via GraphQL
-     */
-    public function syncChargeStatus(Charge $charge): void
-    {
-        if (!$charge->charge_id) {
-            return;
-        }
-
-        try {
-            $user = $charge->shop;
-            $shopifySubscriptionId = "gid://shopify/AppSubscription/{$charge->charge_id}";
-            
-            $query = config('shopify-enhanced-graphql-queries.billing.get_subscription_by_id');
-            
             $result = $this->graphqlService->execute($user, $query, [
                 'id' => $shopifySubscriptionId
             ]);
 
-            if (isset($result['node']['status'])) {
-                $shopifyStatus = $result['node']['status'];
-                $newStatus = strtolower($shopifyStatus);
+            if (isset($result['appSubscriptionCancel']['appSubscription']['status'])) {
+                $activeCharge->update([
+                    'status' => 'cancelled',
+                    'cancelled_on' => now(),
+                    'cancellation_reason' => $reason
+                ]);
 
-                if ($charge->status !== $newStatus) {
-                    $charge->update(['status' => $newStatus]);
-                    
-                    debug_log('Charge status synced via GraphQL', [
-                        'charge_id' => $charge->id,
-                        'old_status' => $charge->status,
-                        'new_status' => $newStatus,
-                        'shopify_status' => $shopifyStatus
-                    ]);
-                }
+                debug_log('Subscription cancelled', [
+                    'user_id' => $user->id,
+                    'charge_id' => $activeCharge->id,
+                    'reason' => $reason
+                ]);
+
+                return true;
             }
 
+            return false;
+
         } catch (Exception $e) {
-            Log::error('Failed to sync charge status via GraphQL', [
-                'charge_id' => $charge->id,
+            Log::error('Failed to cancel subscription', [
+                'user_id' => $user->id,
                 'error' => $e->getMessage()
             ]);
+            return false;
         }
     }
 
@@ -268,53 +174,20 @@ class SubscriptionManagementService
     }
 
     /**
-     * Grant free time by creating a free charge record
+     * Check if user has active billing
      */
-    public function grantFreeTime($user, int $days, ?string $reason = null): bool
+    public function hasActiveBilling($user): bool
     {
         try {
-            // Check if user has existing free time charge
-            $existingFreeCharge = $user->charges()
-                ->where('type', 'free_time')
+            $hasActiveCharge = $user->charges()
                 ->where('status', 'active')
-                ->first();
+                ->whereNull('cancelled_on')
+                ->exists();
 
-            if ($existingFreeCharge) {
-                // Extend existing free time
-                $currentEndDate = $existingFreeCharge->free_until ?? now();
-                $newEndDate = $currentEndDate->addDays($days);
-                $existingFreeCharge->update(['free_until' => $newEndDate]);
-                
-                debug_log('Free time extended', [
-                    'user_id' => $user->id,
-                    'charge_id' => $existingFreeCharge->id,
-                    'days_added' => $days,
-                    'new_end_date' => $newEndDate
-                ]);
-            } else {
-                // Create new free time charge
-                $charge = new Charge();
-                $charge->user_id = $user->id;
-                $charge->type = 'free_time';
-                $charge->status = 'active';
-                $charge->price = 0;
-                $charge->name = 'Free Time Grant';
-                $charge->free_until = now()->addDays($days);
-                $charge->grant_reason = $reason;
-                $charge->save();
-
-                debug_log('Free time granted', [
-                    'user_id' => $user->id,
-                    'charge_id' => $charge->id,
-                    'days_granted' => $days,
-                    'end_date' => $charge->free_until
-                ]);
-            }
-
-            return true;
+            return $hasActiveCharge;
 
         } catch (Exception $e) {
-            Log::error('Failed to grant free time', [
+            Log::error('Failed to check active billing', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage()
             ]);
@@ -329,14 +202,13 @@ class SubscriptionManagementService
     {
         try {
             $coupon = CouponCode::where('code', $couponCode)->first();
-            
+
             if (!$coupon || !$coupon->canBeUsedBy($user)) {
                 return false;
             }
 
-            // Get active charge
             $activeCharge = $this->getCurrentCharge($user);
-            
+
             if ($activeCharge) {
                 $activeCharge->update(['coupon_code' => $couponCode]);
             }
@@ -362,36 +234,106 @@ class SubscriptionManagementService
     }
 
     /**
-     * Calculate effective price with coupon discount
+     * Grant free time by creating a free charge record
      */
-    private function calculateEffectivePrice(float $basePrice, ?string $couponCode = null): float
+    public function grantFreeTime($user, int $days, ?string $reason = null): bool
+    {
+        try {
+            $existingFreeCharge = $user->charges()
+                ->where('type', 'free_time')
+                ->where('status', 'active')
+                ->first();
+
+            if ($existingFreeCharge) {
+                $currentEndDate = $existingFreeCharge->free_until ?? now();
+                $newEndDate = $currentEndDate->addDays($days);
+                $existingFreeCharge->update(['free_until' => $newEndDate]);
+
+                debug_log('Free time extended', [
+                    'user_id' => $user->id,
+                    'charge_id' => $existingFreeCharge->id,
+                    'days_added' => $days
+                ]);
+            } else {
+                $charge = new Charge();
+                $charge->user_id = $user->id;
+                $charge->type = 'free_time';
+                $charge->status = 'active';
+                $charge->price = 0;
+                $charge->name = 'Free Time Grant';
+                $charge->free_until = now()->addDays($days);
+                $charge->grant_reason = $reason;
+                $charge->save();
+
+                debug_log('Free time granted', [
+                    'user_id' => $user->id,
+                    'charge_id' => $charge->id,
+                    'days_granted' => $days
+                ]);
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+            Log::error('Failed to grant free time', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Build Shopify discount structure from coupon code
+     */
+    private function buildDiscountFromCoupon(?string $couponCode): ?array
     {
         if (!$couponCode) {
-            return $basePrice;
+            return null;
         }
 
         $coupon = CouponCode::where('code', $couponCode)->first();
+
         if (!$coupon || !$coupon->isValid()) {
-            return $basePrice;
+            return null;
         }
 
-        return $basePrice - $coupon->getDiscountAmount($basePrice);
+        $discount = ['value' => []];
+
+        // Build discount based on coupon type
+        switch ($coupon->type) {
+            case CouponCode::TYPE_PERCENTAGE:
+                $discount['value']['percentage'] = (float) $coupon->value / 100;
+                break;
+
+            case CouponCode::TYPE_FIXED:
+                $discount['value']['amount'] = (float) $coupon->value;
+                break;
+
+            case CouponCode::TYPE_FREE_DAYS:
+                // Free days handled via trial extension instead
+                return null;
+
+            default:
+                return null;
+        }
+
+        // Add duration limit from metadata (null = unlimited)
+        $durationLimit = $coupon->metadata['duration_limit'] ?? null;
+        $discount['durationLimitInIntervals'] = $durationLimit;
+
+        return $discount;
     }
 
+    /**
+     * Get plan details (price, interval, name)
+     */
     private function getPlanDetails(string $planType): ?array
     {
-        // Billing config removed for simplicity - implement pricing logic directly here
-        $billingConfig = [];
-        
-        if (isset($billingConfig[$planType])) {
-            return $billingConfig[$planType];
-        }
-
-        // Fallback to legacy config
         $pricing = config('shopify-enhanced.subscription_pricing', [
-            'monthly' => 29.99,
-            'yearly' => 299.99,
-            'lifetime' => 999.99
+            'monthly' => 5.00,
+            'yearly' => 50.00,
+            'lifetime' => 299.99
         ]);
 
         $plans = [
@@ -401,13 +343,13 @@ class SubscriptionManagementService
                 'price' => $pricing['monthly']
             ],
             'yearly' => [
-                'name' => 'Yearly Plan', 
+                'name' => 'Yearly Plan',
                 'interval' => 'ANNUAL',
                 'price' => $pricing['yearly']
             ],
             'lifetime' => [
                 'name' => 'Lifetime Plan',
-                'interval' => 'ANNUAL', // Closest to lifetime
+                'interval' => 'ANNUAL',
                 'price' => $pricing['lifetime']
             ]
         ];
